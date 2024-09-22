@@ -17,11 +17,16 @@ class WalkThroughActivity : AppCompatActivity() {
     private lateinit var dots: ArrayList<TextView>
     lateinit var viewPagerAdapter: WalkThroughAdapter
     lateinit var binding:ActivityWalkThroughBinding
+    var images:ArrayList<String> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         binding= ActivityWalkThroughBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
     try {
+        images.add("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walk_through_screen_1.jpg")
+        images.add("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walk_through_image_2.png")
+        images.add("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walk_through_screen_3.png")
+        images.add("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walk_throught_screen_4.jpg")
         Log.d("rk","call on create from walk through Screen")
         dots = ArrayList()
         binding.backBtn.setOnClickListener {
@@ -48,7 +53,7 @@ class WalkThroughActivity : AppCompatActivity() {
             startActivity(i)
             finish()
         }
-        viewPagerAdapter = WalkThroughAdapter(this)
+        viewPagerAdapter = WalkThroughAdapter(this,images)
         binding.slideViewPager.adapter = viewPagerAdapter
         setUpIndicator(0)
         binding.slideViewPager.addOnPageChangeListener(viewListener)

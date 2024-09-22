@@ -14,19 +14,13 @@ import com.bumptech.glide.Glide
 import com.learning.careerconnect.R
 
 
-class WalkThroughAdapter(var context: Context) : PagerAdapter() {
+class WalkThroughAdapter(var context: Context, var images:ArrayList<String>) : PagerAdapter() {
 
     var headings = intArrayOf(
         R.string.walk_through_screen_h1,
         R.string.walk_through_screen_h2,
         R.string.walk_through_screen_h3,
         R.string.walk_through_screen_h4
-    )
-    var images = intArrayOf(
-        R.drawable.walk_through_screen_1,
-        R.drawable.walk_through_image_2,
-        R.drawable.walk_through_screen_3,
-        R.drawable.walk_throught_screen_4,
     )
     var descriptions = intArrayOf(
         R.string.walk_through_screen_d1,
@@ -52,13 +46,9 @@ class WalkThroughAdapter(var context: Context) : PagerAdapter() {
         // Set image
         Glide
             .with(context)
-            .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walkThroughScreen1.svg")
-            .centerCrop()
+            .load(images[position])
             .placeholder(R.drawable.career_connect_white_bg)
-            .into(slideTitleImage);
-//        slideTitleImage.setImageResource(images[position])
-//        slideTitleImage.setImageURI("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walkThroughScreen1.svg" as Uri)
-
+            .into(slideTitleImage)
         // Set heading and description
         slideHeading.setText(headings[position])
         slideDescription.setText(descriptions[position])
