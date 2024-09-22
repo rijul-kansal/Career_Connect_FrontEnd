@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Career Connect</string>
+    <string name="skip">Skip</string>
+
+    <string name="walk_through_screen_h1">Advanced Job Search</string>
+    <string name="walk_through_screen_h2">Instant Communication</string>
+    <string name="walk_through_screen_h3">Test Your Skills</string>
+    <string name="walk_through_screen_h4">Save and Apply Later</string>
+    <string name="walk_through_screen_d1">Easily search for jobs by location, skills, and more. Find the right job faster with our powerful filters.</string>
+    <string name="walk_through_screen_d2">Connect with recruiters directly and communicate in real-time. Stay ahead with quick and easy communication.</string>
+    <string name="walk_through_screen_d3">Take skill-based quizzes to stand out. Showcase your abilities and increase your chances of landing the right job.</string>
+    <string name="walk_through_screen_d4">Save jobs you\'re interested in and apply when you\'re ready. Never miss an opportunity.</string>
+    <string name="get_start"><![CDATA[Get Start ->]]></string>
+    <string name="general_text">General Text</string>
+    <string name="general_text_description">General Text description</string>
+    <string name="intro_d">CareerConnect is designed to make your job search journey smooth and efficient. Whether you\'re a fresh graduate, experienced professional, or looking to switch careers, our app connects you with opportunities that match your skills and aspirations.</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+</resources>
