@@ -16,4 +16,21 @@
     <string name="intro_d">CareerConnect is designed to make your job search journey smooth and efficient. Whether you\'re a fresh graduate, experienced professional, or looking to switch careers, our app connects you with opportunities that match your skills and aspirations.</string>
     <string name="sign_up">Sign Up</string>
     <string name="sign_in">Sign In</string>
+    <string name="sign_up_to_continue">Sign Up to Continue</string>
+    <string name="enter_your_name">enter your name</string>
+    <string name="enter_your_email_address">enter your email address</string>
+    <string name="enter_your_password">enter your password</string>
+    <string name="enter_your_mobile_number">enter your mobile number</string>
+    <string name="choose_one_option">click to choose one option</string>
+    <string name="textview">TextView</string>
+    <string name="sign_in_to_continue">Sign In to Continue</string>
+    <string name="forgotten_password">forgotten password?</string>
+    <string name="would_you_like_to_cancel">would you like to cancel</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+
+    <string-array name="typeOfUser">
+        <item>User</item>
+        <item>Recruiter</item>
+    </string-array>
 </resources>

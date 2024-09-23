@@ -13,7 +13,7 @@ import com.learning.careerconnect.R
 import com.learning.careerconnect.Adapter.WalkThroughAdapter
 import com.learning.careerconnect.databinding.ActivityWalkThroughBinding
 
-class WalkThroughActivity : AppCompatActivity() {
+class WalkThroughActivity : BaseActivity() {
     private lateinit var dots: ArrayList<TextView>
     lateinit var viewPagerAdapter: WalkThroughAdapter
     lateinit var binding:ActivityWalkThroughBinding
@@ -27,7 +27,6 @@ class WalkThroughActivity : AppCompatActivity() {
         images.add("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walk_through_image_2.png")
         images.add("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walk_through_screen_3.png")
         images.add("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/walk_throught_screen_4.jpg")
-        Log.d("rk","call on create from walk through Screen")
         dots = ArrayList()
         binding.backBtn.setOnClickListener {
             if (getItem(0) > 0) {
@@ -119,8 +118,11 @@ class WalkThroughActivity : AppCompatActivity() {
         return binding.slideViewPager.currentItem.plus(i)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("rk","call on destroy from walk through Screen")
+
+    override fun onBackPressed() {
+        if (isOnlyOneActivityInStack())
+            showBackBtnDialog("Would you like to exit",this)
+        else
+            super.onBackPressed()
     }
 }

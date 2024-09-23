@@ -1,9 +1,9 @@
 package com.learning.careerconnect.Activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import com.bumptech.glide.Glide
+import android.os.Handler
 import com.learning.careerconnect.databinding.ActivitySplashScreenBinding
 
 class SplashScreen : AppCompatActivity() {
@@ -12,11 +12,10 @@ class SplashScreen : AppCompatActivity() {
         binding= ActivitySplashScreenBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        Log.d("rk","call on create from splash Screen")
-    }
-
-    override fun onDestroy() {
-        Log.d("rk","call on destroy from splash Screen")
-        super.onDestroy()
+        val handler = Handler()
+        handler.postDelayed( {
+            startActivity(Intent(this, WalkThroughActivity::class.java))
+            finish()
+        }, 1000)
     }
 }
