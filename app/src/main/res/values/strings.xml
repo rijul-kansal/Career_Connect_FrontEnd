@@ -28,9 +28,28 @@
     <string name="would_you_like_to_cancel">would you like to cancel</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
+    <string name="please_enter_6_digit_otp">Please enter 6 digit OTP</string>
+    <string name="hii_user">Hii user....</string>
+    <string name="job_posted">See all job posted</string>
+    <string name="jobs">Jobs</string>
+    <string name="post_new_job">Post new Job</string>
+    <string name="search_jobs">Search Jobs</string>
+    <string name="applied_jobs">Applied jobs</string>
+    <string name="saved_jobs">Saved jobs</string>
+    <string name="general">General</string>
+    <string name="quizes">Quizes</string>
+    <string name="profile">Profile</string>
+    <string name="ask_gemini">Ask Gemini</string>
+    <string name="logout">Logout</string>
+    <string name="open_nav">open_nav\n</string>
+    <string name="close_nav">close_nav</string>
 
     <string-array name="typeOfUser">
         <item>User</item>
         <item>Recruiter</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="chat">Chat</string>
+    <string name="verify_account">Verify account</string>
 </resources>

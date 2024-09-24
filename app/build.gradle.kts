@@ -51,4 +51,10 @@ dependencies {
 
     // Glide Library
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // pin view
+    implementation("io.github.chaosleung:pinview:1.4.4")
+
+    // circular image view
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn = "navigation_view">
+    <item
+        android:title="@string/jobs">
+        <menu>
+            <item
+                android:id="@+id/searchJob"
+                android:icon="@drawable/search_job"
+                android:title="@string/search_jobs"/>
+            <item
+                android:id="@+id/appliedJobs"
+                android:icon="@drawable/see_applied_job"
+                android:title="@string/applied_jobs"/>
+            <item
+                android:id="@+id/savedJobs"
+                android:icon="@drawable/save_later"
+                android:title="@string/saved_jobs"/>
+        </menu>
+    </item>
+    <item
+        android:title="@string/general">
+        <menu>
+            <item
+                android:id="@+id/quiz"
+                android:icon="@drawable/quiz"
+                android:title="@string/quizes"/>
+            <item
+                android:id="@+id/profile"
+                android:icon="@drawable/profile"
+                android:title="@string/profile"/>
+            <item
+                android:id="@+id/geminiModel"
+                android:icon="@drawable/gemini"
+                android:title="@string/ask_gemini"/>
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/logout"
+                android:title="@string/logout"/>
+        </menu>
+    </item>
+</menu>
