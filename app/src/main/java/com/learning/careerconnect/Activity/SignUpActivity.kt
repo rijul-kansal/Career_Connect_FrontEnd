@@ -165,7 +165,7 @@ class SignUpActivity : BaseActivity() {
         window?.setGravity(Gravity.BOTTOM)
         timerTV.setOnClickListener{
             countDownTimer.cancel()
-            authVM.resendOTP(ResendOTPIM(email),this,this)
+            authVM.resendOTP(ResendOTPIM(email,"verifyUser"),this,this)
             countDownTimerFn(timerTV,300000)
         }
         countDownTimerFn(timerTV,300000)

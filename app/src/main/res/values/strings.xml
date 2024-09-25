@@ -53,4 +53,6 @@
     <string name="chat">Chat</string>
     <string name="verify_account">Verify account</string>
     <string name="resend_otp">click here to resend OTP</string>
+    <string name="please_enter_your_email">Please enter your email</string>
+    <string name="get_reset_code">Get Reset Code</string>
 </resources>

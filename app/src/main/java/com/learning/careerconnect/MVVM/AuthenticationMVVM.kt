@@ -73,9 +73,9 @@ class AuthenticationMVVM : ViewModel() {
                                 is SignUpActivity->{
                                     activity.errorFnForVerifyOTP(errorMessage ?: "Unknown error",context)
                                 }
-//                                is SignInActivity ->{
-//                                    activity.errorFnForVerifyOTP(errorMessage ?: "Unknown error")
-//                                }
+                                is SignInActivity ->{
+                                    activity.errorFnForVerifyOTP(errorMessage ?: "Unknown error",context)
+                                }
                             }
                         }
                     }
@@ -86,9 +86,9 @@ class AuthenticationMVVM : ViewModel() {
                     is SignUpActivity->{
                         activity.errorFnForVerifyOTP("No internet connection",context)
                     }
-//                    is SignInActivity ->{
-//                        activity.errorFnForVerifyOTP("No internet connection")
-//                    }
+                    is SignInActivity ->{
+                        activity.errorFnForVerifyOTP("No internet connection",context)
+                    }
                 }
             }
         } catch (err: Exception) {
@@ -101,6 +101,7 @@ class AuthenticationMVVM : ViewModel() {
     var resultOfResendOTP: MutableLiveData<ResendOTPOM> = MutableLiveData()
     fun resendOTP(input: ResendOTPIM, context: Context, activity : Activity) {
         try {
+            Log.d("rk",input.toString())
             if (Constants.checkForInternet(context)) {
                 val func = Constants.getInstance().create(Retrofit::class.java)
                 viewModelScope.launch {
@@ -117,9 +118,9 @@ class AuthenticationMVVM : ViewModel() {
                                 is SignUpActivity->{
                                     activity.errorFn(errorMessage ?: "Unknown error",context)
                                 }
-//                                is SignInActivity ->{
-//                                    activity.errorFn(errorMessage ?: "Unknown error")
-//                                }
+                                is SignInActivity ->{
+                                    activity.errorFnForVerifyOTP(errorMessage ?: "Unknown error",context)
+                                }
                             }
 
                         }
@@ -131,9 +132,9 @@ class AuthenticationMVVM : ViewModel() {
                     is SignUpActivity->{
                         activity.errorFn("No internet connection",context)
                     }
-//                    is SignInActivity ->{
-//                        activity.errorFn("No internet connection")
-//                    }
+                    is SignInActivity ->{
+                        activity.errorFnForVerifyOTP("No internet connection",context)
+                    }
                 }
             }
         } catch (err: Exception) {
@@ -158,7 +159,6 @@ class AuthenticationMVVM : ViewModel() {
                             val errorBody = result.errorBody()?.string()
                             val errorMessage = Constants.parseErrorMessage(errorBody)
                             activity.errorFn(errorMessage ?: "Unknown error")
-
                         }
                     }
                 }

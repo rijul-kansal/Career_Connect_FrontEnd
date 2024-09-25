@@ -1,6 +1,7 @@
 package com.learning.careerconnect.Activity
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -28,6 +30,7 @@ class SignInActivity : BaseActivity() {
     var email:String = ""
     var password:String = ""
     lateinit var otpDialog: Dialog
+    lateinit var emailDialog: Dialog
     lateinit var submitOtpButton: TextView
     lateinit var progressBarOTPButton: ProgressBar
     lateinit var timerTV : TextView
@@ -39,8 +42,7 @@ class SignInActivity : BaseActivity() {
         setContentView(binding.root)
 
         authVM = ViewModelProvider(this)[AuthenticationMVVM::class.java]
-        if(intent.hasExtra(Constants.EMAIL) && intent.hasExtra(Constants.PASSWORD))
-        {
+        if(intent.hasExtra(Constants.EMAIL) && intent.hasExtra(Constants.PASSWORD)) {
             email = intent.getStringExtra(Constants.EMAIL).toString()
             password = intent.getStringExtra(Constants.PASSWORD).toString()
 
@@ -52,7 +54,6 @@ class SignInActivity : BaseActivity() {
             .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/auth_image2.png")
             .placeholder(R.drawable.career_connect_white_bg)
             .into(binding.generalIv)
-
         binding.signInBtn.setOnClickListener {
             email = binding.emailET.text.toString()
             password = binding.passwordET.text.toString()
@@ -63,7 +64,6 @@ class SignInActivity : BaseActivity() {
                 authVM.loginUser(LoginIM(email,password),this,this)
             }
         }
-
         authVM.observerForLoginUser().observe(this, Observer{
             Log.d("rk",it.toString())
             if(it.status == "success")
@@ -81,7 +81,6 @@ class SignInActivity : BaseActivity() {
                 toast(it.message.toString(),this)
             }
         })
-
         authVM.observerForVerifyOTPUser().observe(this, Observer{
             toast(it.message!!,this@SignInActivity)
 
@@ -110,9 +109,24 @@ class SignInActivity : BaseActivity() {
 
         })
 
+        authVM.observerForResendOTP().observe(this, Observer{
+            toast(it.message!!,this@SignInActivity)
+
+            if(it.message == "successfully send OTP , Please check your email id")
+            {
+                emailDialog.dismiss()
+            }
+            else
+            {
+                submitOtpButton.visibility=View.VISIBLE
+                progressBarOTPButton.visibility=View.INVISIBLE
+
+            }
+        })
+        binding.forgottenPassword.setOnClickListener {
+            showEmailDialog()
+        }
     }
-
-
     fun errorFn(message:String) {
 
         if(message == "Please verify your email first")
@@ -123,7 +137,6 @@ class SignInActivity : BaseActivity() {
         binding.signInBtn.visibility= View.VISIBLE
         Toast.makeText(this,message, Toast.LENGTH_LONG).show()
     }
-
     private fun valid(email:String,password:String): Boolean {
         if(email.length == 0)
         {
@@ -142,14 +155,12 @@ class SignInActivity : BaseActivity() {
         }
         return true
     }
-
     override fun onBackPressed() {
         if (isOnlyOneActivityInStack())
             showBackBtnDialog("Would you like to exit",this)
         else
             super.onBackPressed()
     }
-
     private fun showOTPDialog() {
         otpDialog = Dialog(this, android.R.style.Theme_Translucent_NoTitleBar)
         otpDialog = Dialog(this)
@@ -183,5 +194,37 @@ class SignInActivity : BaseActivity() {
             }
         }
         otpDialog.show()
+    }
+    private fun showEmailDialog() {
+        emailDialog = Dialog(this, android.R.style.Theme_Translucent_NoTitleBar)
+        emailDialog = Dialog(this)
+        val view: View = LayoutInflater.from(this).inflate(R.layout.email_show_dialog, null)
+        submitOtpButton = view.findViewById(R.id.sendOTP)
+        progressBarOTPButton = view.findViewById(R.id.progressBarDialog)
+        emailDialog.setContentView(view)
+        emailDialog.setCanceledOnTouchOutside(false)
+        val window = emailDialog.window
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawableResource(android.R.color.transparent)
+        window?.setGravity(Gravity.BOTTOM)
+        submitOtpButton.setOnClickListener {
+            email = view.findViewById<EditText>(R.id.emailETDialog).text.toString()
+            if(email.length > 0)
+            {
+                submitOtpButton.visibility=View.INVISIBLE
+                progressBarOTPButton.visibility=View.VISIBLE
+                authVM.resendOTP(ResendOTPIM(email,"forgottenPassword"),this,this@SignInActivity)
+            }
+            else
+            {
+                view.findViewById<EditText>(R.id.emailETDialog).setError("Please enter otp")
+            }
+        }
+        emailDialog.show()
+    }
+    fun errorFnForVerifyOTP(message:String,context: Context) {
+        submitOtpButton.visibility=View.VISIBLE
+        progressBarOTPButton.visibility=View.INVISIBLE
+        errorFn(message)
     }
 }
