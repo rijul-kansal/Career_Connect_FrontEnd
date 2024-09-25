@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,6 +8,9 @@
     android:orientation="vertical"
     android:gravity="center">
     <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/generalTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,6 +21,9 @@
         android:layout_margin="20dp"/>
 
     <com.chaos.view.PinView
+        app:layout_constraintTop_toBottomOf="@id/generalTV"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/otpET"
         style="@style/PinWidget.PinView"
         android:layout_width="wrap_content"
@@ -41,6 +47,8 @@
         app:viewType="rectangle" />
 
     <TextView
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:padding="16dp"
         android:id="@+id/verifyAccountBtn"
         android:layout_width="match_parent"
@@ -54,14 +62,35 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"/>
-    <TextView
-        android:padding="16dp"
-        android:id="@+id/timerTV"
+    <ProgressBar
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:padding="2dp"
+        android:id="@+id/progressBarDialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/verify_account"
         android:gravity="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:background="@drawable/main_colour_border_bg_btn_inside_white"
+        app:layout_constraintTop_toBottomOf="@id/otpET"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"/>
+    <TextView
+        android:clickable="false"
+        app:layout_constraintTop_toBottomOf="@id/verifyAccountBtn"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:padding="16dp"
+        android:id="@+id/timerTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:gravity="center"
         android:textSize="12sp"
         android:textColor="@color/black"
         android:layout_marginTop="16dp" />
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
