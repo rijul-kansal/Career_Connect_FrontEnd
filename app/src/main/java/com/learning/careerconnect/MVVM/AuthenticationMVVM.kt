@@ -13,6 +13,8 @@ import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
 import com.learning.careerconnect.Model.ResendOTPIM
 import com.learning.careerconnect.Model.ResendOTPOM
+import com.learning.careerconnect.Model.ResetPasswordIM
+import com.learning.careerconnect.Model.ResetPasswordOM
 import com.learning.careerconnect.Model.SignUpIM
 import com.learning.careerconnect.Model.SignUpOM
 import com.learning.careerconnect.Model.VerifyOTPIM
@@ -170,5 +172,32 @@ class AuthenticationMVVM : ViewModel() {
         }
     }
     fun observerForLoginUser(): LiveData<LoginOM> = resultOfLoginUser
+    // reset password
+    var resultOfResetPassword: MutableLiveData<ResetPasswordOM> = MutableLiveData()
+    fun resetPassword(input: ResetPasswordIM, context: Context, activity : SignInActivity) {
+        try {
+            if (Constants.checkForInternet(context)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.resetPassword(input)
+                    Log.d("rk",result.toString())
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfResetPassword.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            activity.errorFnForVerifyOTP(errorMessage ?: "Unknown error",context)
 
+                        }
+                    }
+                }
+            } else {
+                activity.errorFnForVerifyOTP("No internet connection",context)
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForResetPassword(): LiveData<ResetPasswordOM> = resultOfResetPassword
 }

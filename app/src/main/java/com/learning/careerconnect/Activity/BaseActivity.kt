@@ -62,7 +62,7 @@ open class BaseActivity : AppCompatActivity() {
             // Callback function, fired on regular interval
             override fun onTick(millis: Long) {
                 var min = millis/(1000*60)
-                view.text = "resend OTP in ${min}:${abs(min*60*1000 - millis) /1000}"
+                view.text = "resend OTP in 0${min}:${abs(min*60*1000 - millis) /1000}"
             }
 
             override fun onFinish() {

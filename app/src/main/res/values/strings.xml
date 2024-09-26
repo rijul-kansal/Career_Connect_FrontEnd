@@ -55,4 +55,6 @@
     <string name="resend_otp">click here to resend OTP</string>
     <string name="please_enter_your_email">Please enter your email</string>
     <string name="get_reset_code">Get Reset Code</string>
+    <string name="please_enter_6_digit_otp_and_new_password">Please enter 6 digit OTP and new password</string>
+    <string name="reset_password">Reset password</string>
 </resources>

@@ -20,6 +20,7 @@ import com.chaos.view.PinView
 import com.learning.careerconnect.MVVM.AuthenticationMVVM
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.ResendOTPIM
+import com.learning.careerconnect.Model.ResetPasswordIM
 import com.learning.careerconnect.Model.VerifyOTPIM
 import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
@@ -31,6 +32,7 @@ class SignInActivity : BaseActivity() {
     var password:String = ""
     lateinit var otpDialog: Dialog
     lateinit var emailDialog: Dialog
+    lateinit var resetPasswordDialog: Dialog
     lateinit var submitOtpButton: TextView
     lateinit var progressBarOTPButton: ProgressBar
     lateinit var timerTV : TextView
@@ -89,8 +91,6 @@ class SignInActivity : BaseActivity() {
                 otpDialog.dismiss()
                 val i =Intent(this, SignInActivity::class.java)
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                i.putExtra(Constants.EMAIL , email)
-                i.putExtra(Constants.PASSWORD , password)
                 startActivity(i)
                 finish()
             }
@@ -115,6 +115,11 @@ class SignInActivity : BaseActivity() {
             if(it.message == "successfully send OTP , Please check your email id")
             {
                 emailDialog.dismiss()
+                showResetPasswordDialog()
+            }
+            else if(it.message =="password change successfully")
+            {
+                resetPasswordDialog.dismiss()
             }
             else
             {
@@ -123,9 +128,31 @@ class SignInActivity : BaseActivity() {
 
             }
         })
+
         binding.forgottenPassword.setOnClickListener {
             showEmailDialog()
         }
+
+        authVM.observerForResetPassword().observe(this, Observer{
+            if(it.message == "Please check your email or otp")
+            {
+                it.message = "Please check your OTP"
+            }
+            toast(it.message!!,this@SignInActivity)
+
+            if(it.message == "password change successfully")
+            {
+                resetPasswordDialog.dismiss()
+            }
+            else
+            {
+                submitOtpButton.visibility=View.VISIBLE
+                progressBarOTPButton.visibility=View.INVISIBLE
+
+            }
+
+
+        })
     }
     fun errorFn(message:String) {
 
@@ -179,7 +206,6 @@ class SignInActivity : BaseActivity() {
             authVM.resendOTP(ResendOTPIM(email),this,this)
             countDownTimerFn(timerTV,300000)
         }
-//
         submitOtpButton.setOnClickListener {
             val otp = view.findViewById<PinView>(R.id.otpET).text.toString()
             if(otp.length > 0)
@@ -194,6 +220,49 @@ class SignInActivity : BaseActivity() {
             }
         }
         otpDialog.show()
+    }
+
+    private fun showResetPasswordDialog() {
+        resetPasswordDialog = Dialog(this, android.R.style.Theme_Translucent_NoTitleBar)
+        resetPasswordDialog = Dialog(this)
+        val view: View = LayoutInflater.from(this).inflate(R.layout.reset_password_show_dialog, null)
+        submitOtpButton = view.findViewById(R.id.resetPassBtn)
+        progressBarOTPButton = view.findViewById(R.id.progressBarDialog)
+        timerTV = view.findViewById(R.id.timerTVReset)
+        resetPasswordDialog.setContentView(view)
+        resetPasswordDialog.setCanceledOnTouchOutside(false)
+        val window = resetPasswordDialog.window
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawableResource(android.R.color.transparent)
+        window?.setGravity(Gravity.BOTTOM)
+        countDownTimerFn(timerTV,300000)
+        timerTV.setOnClickListener{
+            countDownTimer.cancel()
+            authVM.resendOTP(ResendOTPIM(email,"forgottenPassword"),this,this)
+            countDownTimerFn(timerTV,300000)
+        }
+        submitOtpButton.setOnClickListener {
+            val otp = view.findViewById<PinView>(R.id.otpETResetPass).text.toString()
+            val password = view.findViewById<EditText>(R.id.passwordETReset).text.toString()
+            if(otp.length > 0 && password.length >= 8)
+            {
+                submitOtpButton.visibility=View.INVISIBLE
+                progressBarOTPButton.visibility=View.VISIBLE
+                authVM.resetPassword(ResetPasswordIM(email,otp,password),this,this@SignInActivity)
+            }
+            else if(otp.length <=0)
+            {
+                view.findViewById<PinView>(R.id.otpETResetPass).setError("Please enter otp")
+            }
+            else if( password.length <=0)
+            {
+                view.findViewById<EditText>(R.id.passwordETReset).setError("Please enter password")
+            }else if( password.length <8)
+            {
+                view.findViewById<EditText>(R.id.passwordETReset).setError("password length should be 8 minimum char long")
+            }
+        }
+        resetPasswordDialog.show()
     }
     private fun showEmailDialog() {
         emailDialog = Dialog(this, android.R.style.Theme_Translucent_NoTitleBar)

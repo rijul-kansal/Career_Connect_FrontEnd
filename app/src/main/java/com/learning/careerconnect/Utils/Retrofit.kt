@@ -4,6 +4,8 @@ import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
 import com.learning.careerconnect.Model.ResendOTPIM
 import com.learning.careerconnect.Model.ResendOTPOM
+import com.learning.careerconnect.Model.ResetPasswordIM
+import com.learning.careerconnect.Model.ResetPasswordOM
 import com.learning.careerconnect.Model.SignUpIM
 import com.learning.careerconnect.Model.SignUpOM
 import com.learning.careerconnect.Model.VerifyOTPIM
@@ -23,4 +25,6 @@ interface Retrofit {
 
     @POST("/v1/authentication/login")
     suspend fun login(@Body body : LoginIM) : Response<LoginOM>
+    @PATCH("/v1/authentication/resetPassword")
+    suspend fun resetPassword(@Body body : ResetPasswordIM) : Response<ResetPasswordOM>
 }
