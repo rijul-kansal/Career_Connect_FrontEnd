@@ -25,7 +25,11 @@
         <activity
             android:name=".Activity.MainActivity"
             android:exported="true"
-            android:theme="@style/signUpInActivity">
+            android:theme="@style/mainActivityTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Activity.SignInActivity"
@@ -49,10 +53,6 @@
             android:name=".Activity.SplashScreen"
             android:exported="true"
             android:theme="@style/splashScreenTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

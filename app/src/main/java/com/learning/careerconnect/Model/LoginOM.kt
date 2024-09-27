@@ -4,7 +4,8 @@ data class LoginOM(
     var `data`: Data? = null,
     var message:String?=null,
     var status: String? = null, // success
-    var token: String? = null // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYkBnbWFpbC5jb20iLCJpYXQiOjE3MjcyODcwODYsImV4cCI6MTcyODE1MTA4Nn0.cbZ_vQ5M1knLZ2g8XzG8ch9b7s2O4k9w7KlLPWLUy88
+    var token: String? = null, // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYkBnbWFpbC5jb20iLCJpYXQiOjE3MjcyODcwODYsImV4cCI6MTcyODE1MTA4Nn0.cbZ_vQ5M1knLZ2g8XzG8ch9b7s2O4k9w7KlLPWLUy88
+    var refreshToken: String? = null, // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYkBnbWFpbC5jb20iLCJpYXQiOjE3MjcyODcwODYsImV4cCI6MTcyODE1MTA4Nn0.cbZ_vQ5M1knLZ2g8XzG8ch9b7s2O4k9w7KlLPWLUy88
 ) {
     data class Data(
         var `data`: Data? = null

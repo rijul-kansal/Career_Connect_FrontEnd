@@ -30,14 +30,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        binding.toolbar.setTitleTextColor(resources.getColor(R.color.black))
+        binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
 
 
         binding.navView.setNavigationItemSelectedListener(this)
         binding.navView.inflateMenu(R.menu.recruiter_menu)
         val toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open_nav, R.string.close_nav)
         binding.drawerLayout.addDrawerListener(toggle)
-        toggle.drawerArrowDrawable.color = resources.getColor(R.color.black)
+        toggle.drawerArrowDrawable.color = resources.getColor(R.color.white)
         toggle.syncState()
 
 
