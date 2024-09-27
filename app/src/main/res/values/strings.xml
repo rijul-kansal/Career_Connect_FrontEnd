@@ -57,4 +57,5 @@
     <string name="get_reset_code">Get Reset Code</string>
     <string name="please_enter_6_digit_otp_and_new_password">Please enter 6 digit OTP and new password</string>
     <string name="reset_password">Reset password</string>
+    <string name="enter_name_of_the_company">enter name of the company</string>
 </resources>

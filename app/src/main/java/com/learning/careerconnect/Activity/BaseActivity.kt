@@ -1,13 +1,20 @@
 package com.learning.careerconnect.Activity
 
+import android.Manifest
+import android.app.Activity
 import android.app.ActivityManager
 import android.app.Dialog
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.learning.careerconnect.R
 import kotlin.math.abs
 
@@ -71,4 +78,36 @@ open class BaseActivity : AppCompatActivity() {
             }
         }.start()
     }
+
+    fun checkNotificationPermission(context: Activity): Boolean {
+        return (ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_NOTIFICATION_POLICY
+        ) == PackageManager.PERMISSION_GRANTED)
+    }
+    // else req permission
+    fun requestPermission(context: Activity) {
+        ActivityCompat.requestPermissions(context ,permissions(), 1)
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    val storagePermissions33 = arrayOf(
+        Manifest.permission.ACCESS_NOTIFICATION_POLICY,
+        Manifest.permission.POST_NOTIFICATIONS
+    )
+    fun permissions(): Array<String> {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            storagePermissions33
+        } else {
+            storagePermissions
+        }
+    }
+    val storagePermissions = arrayOf(
+        Manifest.permission.ACCESS_NOTIFICATION_POLICY,
+        Manifest.permission.POST_NOTIFICATIONS
+    )
 }

@@ -15,6 +15,11 @@ object Constants {
 
     const val EMAIL="email"
     const val PASSWORD="password"
+    const val GET_ME_SP_PN ="get me shared preference preference name"
+    const val GET_ME_SP ="get me shared preference"
+    const val TOKEN_SP_PN= " token preference name"
+    const val JWT_TOKEN_SP= " jwt token"
+    const val REFRESH_TOKEN_SP= "refresh token"
       // aws
 //    val baseUrl = "http://43.204.217.202:3200"
     // render

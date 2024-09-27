@@ -8,10 +8,14 @@ import com.learning.careerconnect.Model.ResetPasswordIM
 import com.learning.careerconnect.Model.ResetPasswordOM
 import com.learning.careerconnect.Model.SignUpIM
 import com.learning.careerconnect.Model.SignUpOM
+import com.learning.careerconnect.Model.UpdateMeIM
+//import com.learning.careerconnect.Model.UpdateMeIM
+import com.learning.careerconnect.Model.UpdateMeOM
 import com.learning.careerconnect.Model.VerifyOTPIM
 import com.learning.careerconnect.Model.VerifyOTPOM
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 
@@ -27,4 +31,7 @@ interface Retrofit {
     suspend fun login(@Body body : LoginIM) : Response<LoginOM>
     @PATCH("/v1/authentication/resetPassword")
     suspend fun resetPassword(@Body body : ResetPasswordIM) : Response<ResetPasswordOM>
+
+    @PATCH("/v1/user")
+    suspend fun updateMe(@Header("authorization") authHeader:String, @Body body : UpdateMeIM) : Response<UpdateMeOM>
 }

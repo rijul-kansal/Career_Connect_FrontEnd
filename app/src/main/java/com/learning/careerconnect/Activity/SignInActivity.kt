@@ -17,10 +17,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.chaos.view.PinView
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
 import com.learning.careerconnect.MVVM.AuthenticationMVVM
+import com.learning.careerconnect.MVVM.UserMVVM
 import com.learning.careerconnect.Model.LoginIM
+import com.learning.careerconnect.Model.LoginOM
 import com.learning.careerconnect.Model.ResendOTPIM
 import com.learning.careerconnect.Model.ResetPasswordIM
+import com.learning.careerconnect.Model.UpdateMeIM
+//import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.Model.VerifyOTPIM
 import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
@@ -38,12 +45,15 @@ class SignInActivity : BaseActivity() {
     lateinit var timerTV : TextView
 
     lateinit var authVM: AuthenticationMVVM
+    lateinit var userVM: UserMVVM
+    lateinit var resultOfLoginUser:LoginOM
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         authVM = ViewModelProvider(this)[AuthenticationMVVM::class.java]
+        userVM = ViewModelProvider(this)[UserMVVM::class.java]
         if(intent.hasExtra(Constants.EMAIL) && intent.hasExtra(Constants.PASSWORD)) {
             email = intent.getStringExtra(Constants.EMAIL).toString()
             password = intent.getStringExtra(Constants.PASSWORD).toString()
@@ -67,7 +77,8 @@ class SignInActivity : BaseActivity() {
             }
         }
         authVM.observerForLoginUser().observe(this, Observer{
-            Log.d("rk",it.toString())
+            resultOfLoginUser = it
+            getFCM()
             if(it.status == "success")
             {
                 binding.progressBar.visibility= View.INVISIBLE
@@ -150,8 +161,10 @@ class SignInActivity : BaseActivity() {
                 progressBarOTPButton.visibility=View.INVISIBLE
 
             }
+        })
 
-
+        userVM.observerForUpdateMe().observe(this , Observer {
+            Log.d("rk",it.toString())
         })
     }
     fun errorFn(message:String) {
@@ -295,5 +308,23 @@ class SignInActivity : BaseActivity() {
         submitOtpButton.visibility=View.VISIBLE
         progressBarOTPButton.visibility=View.INVISIBLE
         errorFn(message)
+    }
+
+    fun getFCM()
+    {
+        val sharedPreference =  getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
+        var editor = sharedPreference.edit()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("rk", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            val token = task.result
+            resultOfLoginUser.data!!.data!!.fcmToken = token
+            val jsonstr= Gson().toJson(resultOfLoginUser)
+            editor.putString(Constants.GET_ME_SP,jsonstr.toString())
+            editor.commit()
+            userVM.updateMe(UpdateMeIM(fcmToken = token) , this@SignInActivity,this@SignInActivity,"Bearer ${resultOfLoginUser.token}")
+        })
     }
 }
