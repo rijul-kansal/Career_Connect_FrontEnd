@@ -21,13 +21,10 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.learning.careerconnect.MVVM.AuthenticationMVVM
-import com.learning.careerconnect.MVVM.UserMVVM
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
 import com.learning.careerconnect.Model.ResendOTPIM
 import com.learning.careerconnect.Model.ResetPasswordIM
-import com.learning.careerconnect.Model.UpdateMeIM
-//import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.Model.VerifyOTPIM
 import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
@@ -45,7 +42,6 @@ class SignInActivity : BaseActivity() {
     lateinit var timerTV : TextView
 
     lateinit var authVM: AuthenticationMVVM
-    lateinit var userVM: UserMVVM
     lateinit var resultOfLoginUser:LoginOM
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +49,6 @@ class SignInActivity : BaseActivity() {
         setContentView(binding.root)
 
         authVM = ViewModelProvider(this)[AuthenticationMVVM::class.java]
-        userVM = ViewModelProvider(this)[UserMVVM::class.java]
         if(intent.hasExtra(Constants.EMAIL) && intent.hasExtra(Constants.PASSWORD)) {
             email = intent.getStringExtra(Constants.EMAIL).toString()
             password = intent.getStringExtra(Constants.PASSWORD).toString()
@@ -77,17 +72,22 @@ class SignInActivity : BaseActivity() {
             }
         }
         authVM.observerForLoginUser().observe(this, Observer{
-            resultOfLoginUser = it
-            getFCM()
+
             if(it.status == "success")
             {
+                val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
+                var editor = sharedPreference.edit()
+
+                editor.putString(Constants.JWT_TOKEN_SP,it.token)
+                editor.putLong(Constants.TIME_LEFT,System.currentTimeMillis())
+                editor.putString(Constants.REFRESH_TOKEN_SP,it.refreshToken)
+                editor.commit()
+                resultOfLoginUser = it
+                getFCM()
+
                 binding.progressBar.visibility= View.INVISIBLE
                 binding.signInBtn.visibility= View.VISIBLE
                 toast("Successfully Login!!!",this)
-                val i =Intent(this, MainActivity::class.java)
-                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(i)
-                finish()
             }
             else
             {
@@ -161,10 +161,6 @@ class SignInActivity : BaseActivity() {
                 progressBarOTPButton.visibility=View.INVISIBLE
 
             }
-        })
-
-        userVM.observerForUpdateMe().observe(this , Observer {
-            Log.d("rk",it.toString())
         })
     }
     fun errorFn(message:String) {
@@ -310,21 +306,33 @@ class SignInActivity : BaseActivity() {
         errorFn(message)
     }
 
-    fun getFCM()
-    {
-        val sharedPreference =  getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
-        var editor = sharedPreference.edit()
+    fun getFCM() {
+        val sharedPreference = getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.d("rk", "Fetching FCM registration token failed", task.exception)
+                // Optionally retry fetching the token
+                Toast.makeText(this, "Failed to get FCM token. Retrying...", Toast.LENGTH_SHORT).show()
                 return@OnCompleteListener
             }
+
             val token = task.result
-            resultOfLoginUser.data!!.data!!.fcmToken = token
-            val jsonstr= Gson().toJson(resultOfLoginUser)
-            editor.putString(Constants.GET_ME_SP,jsonstr.toString())
-            editor.commit()
-            userVM.updateMe(UpdateMeIM(fcmToken = token) , this@SignInActivity,this@SignInActivity,"Bearer ${resultOfLoginUser.token}")
+            if (token != null) {
+                resultOfLoginUser.data?.data?.fcmToken = token
+                val jsonStr = Gson().toJson(resultOfLoginUser)
+                editor.putString(Constants.GET_ME_SP, jsonStr)
+                editor.apply()
+                val i =Intent(this, MainActivity::class.java)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                i.putExtra(Constants.FCM_TOKEN,token)
+                Log.d("rk","fcm ${token}")
+                startActivity(i)
+                finish()
+            } else {
+                Log.d("rk", "Token is null")
+            }
         })
     }
 }

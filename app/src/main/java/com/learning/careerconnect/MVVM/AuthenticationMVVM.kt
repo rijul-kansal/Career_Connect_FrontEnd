@@ -9,8 +9,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.careerconnect.Activity.SignInActivity
 import com.learning.careerconnect.Activity.SignUpActivity
+import com.learning.careerconnect.Activity.SplashScreen
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
+import com.learning.careerconnect.Model.RefreshTokenIM
+import com.learning.careerconnect.Model.RefreshTokenOM
 import com.learning.careerconnect.Model.ResendOTPIM
 import com.learning.careerconnect.Model.ResendOTPOM
 import com.learning.careerconnect.Model.ResetPasswordIM
@@ -200,4 +203,32 @@ class AuthenticationMVVM : ViewModel() {
         }
     }
     fun observerForResetPassword(): LiveData<ResetPasswordOM> = resultOfResetPassword
+
+    // refresh token
+    var resultOfRefreshToken: MutableLiveData<RefreshTokenOM> = MutableLiveData()
+    fun refreshToken(input: RefreshTokenIM, context: Context, activity : SplashScreen, token :String) {
+        try {
+            if (Constants.checkForInternet(context)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.refreshToken(token,input)
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfRefreshToken.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            activity.errorFn(errorMessage ?: "Unknown error")
+
+                        }
+                    }
+                }
+            } else {
+                activity.errorFn("No internet connection")
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForRefreshToken(): LiveData<RefreshTokenOM> = resultOfRefreshToken
 }

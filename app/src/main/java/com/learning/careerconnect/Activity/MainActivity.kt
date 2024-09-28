@@ -1,5 +1,6 @@
 package com.learning.careerconnect.Activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -7,10 +8,17 @@ import android.os.Looper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
+import com.learning.careerconnect.MVVM.UserMVVM
+import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.R
+import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.databinding.ActivityMainBinding
 import com.learning.careerconnect.fragment.AppliedJobFragment
 import com.learning.careerconnect.fragment.GeminiFragment
@@ -23,11 +31,32 @@ import com.learning.careerconnect.fragment.SeeAllPostedJobFragment
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener  {
     lateinit var binding:ActivityMainBinding
+    lateinit var userVM: UserMVVM
     var doubleBackToExitPressedOnce = false
+    lateinit var token:String
     override fun onCreate(savedInstanceState: Bundle?) {
         binding= ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        try{
+            userVM = ViewModelProvider(this)[UserMVVM::class.java]
+            val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
+            token = sharedPreference.getString(Constants.JWT_TOKEN_SP,"rk").toString()
+            if(intent.hasExtra(Constants.FCM_TOKEN))
+            {
+                Log.d("rk","fcm $token")
+                val fcmToken =intent.getStringExtra(Constants.FCM_TOKEN).toString()
+                Log.d("rk","fcm $fcmToken")
+                userVM.updateMe(UpdateMeIM(fcmToken = fcmToken), this, this, "Bearer ${token}")
+            }
+            userVM.observerForUpdateMe().observe(this , Observer {
+                Log.d("rk", it.toString())
+            })
+        }catch(err:Exception)
+        {
+            Log.d("rk",err.toString())
+        }
 
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
@@ -75,6 +104,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 supportActionBar?.setTitle("Profile")
             }
             R.id.logout->{
+                val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
+                var editor = sharedPreference.edit()
+                editor.remove(Constants.JWT_TOKEN_SP)
+                editor.remove(Constants.REFRESH_TOKEN_SP)
+                editor.remove(Constants.TIME_LEFT)
+                editor.commit()
                 startActivity(Intent(this,IntroActivity::class.java))
                 finish()
             }
@@ -132,5 +167,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun errorFn(message:String) {
+        Toast.makeText(this,message, Toast.LENGTH_LONG).show()
     }
 }

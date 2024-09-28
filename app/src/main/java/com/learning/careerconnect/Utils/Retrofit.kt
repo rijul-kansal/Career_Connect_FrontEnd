@@ -2,6 +2,8 @@ package com.learning.careerconnect.Utils
 
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
+import com.learning.careerconnect.Model.RefreshTokenIM
+import com.learning.careerconnect.Model.RefreshTokenOM
 import com.learning.careerconnect.Model.ResendOTPIM
 import com.learning.careerconnect.Model.ResendOTPOM
 import com.learning.careerconnect.Model.ResetPasswordIM
@@ -34,4 +36,7 @@ interface Retrofit {
 
     @PATCH("/v1/user")
     suspend fun updateMe(@Header("authorization") authHeader:String, @Body body : UpdateMeIM) : Response<UpdateMeOM>
+
+    @POST("/v1/authentication/refreshToken")
+    suspend fun refreshToken(@Header("authorization") authHeader:String, @Body body : RefreshTokenIM) : Response<RefreshTokenOM>
 }

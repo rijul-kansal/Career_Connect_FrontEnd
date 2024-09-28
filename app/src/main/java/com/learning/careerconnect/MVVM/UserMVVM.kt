@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.learning.careerconnect.Activity.MainActivity
 import com.learning.careerconnect.Activity.SignInActivity
 import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.Model.UpdateMeOM
@@ -18,7 +19,7 @@ import kotlinx.coroutines.withContext
 class UserMVVM : ViewModel() {
 
     var resultOfUpdateMe: MutableLiveData<UpdateMeOM> = MutableLiveData()
-    fun updateMe(input: UpdateMeIM, context: Context, activity : SignInActivity,token:String) {
+    fun updateMe(input: UpdateMeIM, context: Context, activity : MainActivity,token:String) {
         try {
             if (Constants.checkForInternet(context)) {
                 val func = Constants.getInstance().create(Retrofit::class.java)
