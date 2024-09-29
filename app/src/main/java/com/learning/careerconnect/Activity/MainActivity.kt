@@ -34,36 +34,41 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     lateinit var userVM: UserMVVM
     var doubleBackToExitPressedOnce = false
     lateinit var token:String
+    lateinit var typeOfUser:String
     override fun onCreate(savedInstanceState: Bundle?) {
         binding= ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        try{
-            userVM = ViewModelProvider(this)[UserMVVM::class.java]
-            val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
-            token = sharedPreference.getString(Constants.JWT_TOKEN_SP,"rk").toString()
-            if(intent.hasExtra(Constants.FCM_TOKEN))
-            {
-                Log.d("rk","fcm $token")
-                val fcmToken =intent.getStringExtra(Constants.FCM_TOKEN).toString()
-                Log.d("rk","fcm $fcmToken")
-                userVM.updateMe(UpdateMeIM(fcmToken = fcmToken), this, this, "Bearer ${token}")
-            }
-            userVM.observerForUpdateMe().observe(this , Observer {
-                Log.d("rk", it.toString())
-            })
-        }catch(err:Exception)
+        userVM = ViewModelProvider(this)[UserMVVM::class.java]
+        val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
+        val sharedPreference1 = getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
+        typeOfUser = sharedPreference1.getString(Constants.TYPE_OF_USER,"rk").toString()
+        token = sharedPreference.getString(Constants.JWT_TOKEN_SP,"rk").toString()
+        if(intent.hasExtra(Constants.FCM_TOKEN))
         {
-            Log.d("rk",err.toString())
+            Log.d("rk","fcm $token")
+            val fcmToken =intent.getStringExtra(Constants.FCM_TOKEN).toString()
+            Log.d("rk","fcm $fcmToken")
+            userVM.updateMe(UpdateMeIM(fcmToken = fcmToken), this, this, "Bearer ${token}")
         }
+        userVM.observerForUpdateMe().observe(this , Observer {
+            Log.d("rk", it.toString())
+        })
+
 
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
 
 
         binding.navView.setNavigationItemSelectedListener(this)
-        binding.navView.inflateMenu(R.menu.recruiter_menu)
+        if(typeOfUser == "User")
+        {
+            binding.navView.inflateMenu(R.menu.user_menu)
+        }
+        else
+        {
+            binding.navView.inflateMenu(R.menu.recruiter_menu)
+        }
         val toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open_nav, R.string.close_nav)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.drawerArrowDrawable.color = resources.getColor(R.color.white)
@@ -110,6 +115,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 editor.remove(Constants.REFRESH_TOKEN_SP)
                 editor.remove(Constants.TIME_LEFT)
                 editor.commit()
+                val sharedPreference1 = getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
+                val editor1 = sharedPreference1.edit()
+                editor1.remove(Constants.GET_ME_SP)
+                editor1.remove(Constants.TYPE_OF_USER)
+                editor1.commit()
                 startActivity(Intent(this,IntroActivity::class.java))
                 finish()
             }

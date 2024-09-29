@@ -323,6 +323,7 @@ class SignInActivity : BaseActivity() {
                 resultOfLoginUser.data?.data?.fcmToken = token
                 val jsonStr = Gson().toJson(resultOfLoginUser)
                 editor.putString(Constants.GET_ME_SP, jsonStr)
+                editor.putString(Constants.TYPE_OF_USER, resultOfLoginUser.data!!.data!!.typeOfUser)
                 editor.apply()
                 val i =Intent(this, MainActivity::class.java)
                 i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
