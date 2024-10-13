@@ -1,13 +1,7 @@
 package com.learning.careerconnect.Activity
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.learning.careerconnect.R
 import com.learning.careerconnect.databinding.ActivityIntroBinding
@@ -41,6 +35,4 @@ class IntroActivity : BaseActivity() {
         else
             super.onBackPressed()
     }
-
-
 }

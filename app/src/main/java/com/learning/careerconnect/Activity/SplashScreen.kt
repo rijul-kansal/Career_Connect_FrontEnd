@@ -28,7 +28,7 @@ class SplashScreen : AppCompatActivity() {
         val timeLeft = sharedPreference.getLong(Constants.TIME_LEFT,-1)
         val currentTime = System.currentTimeMillis()
 //        val currentTime = 1728406955000L
-        val time = (currentTime-timeLeft)/(86400000);
+        val time = (currentTime-timeLeft)/(86400000)
 //        Log.d("rk","token ${token}")
 //        Log.d("rk","refreshToken ${refreshToken}")
 //        Log.d("rk","time left ${timeLeft}")
@@ -46,7 +46,6 @@ class SplashScreen : AppCompatActivity() {
         else if(timeLeft !=-1L && token!="rk" && time >= 10)
         {
             startActivity(Intent(this, SignInActivity::class.java))
-            finish()
         }
         else
         {

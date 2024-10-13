@@ -58,4 +58,12 @@
     <string name="please_enter_6_digit_otp_and_new_password">Please enter 6 digit OTP and new password</string>
     <string name="reset_password">Reset password</string>
     <string name="enter_name_of_the_company">enter name of the company</string>
+    <string name="name_of_role">Name of role</string>
+    <string name="name_of_company">Name of company</string>
+    <string name="location">location</string>
+    <string name="type_of_job">type of job</string>
+    <string name="stipned">stipned</string>
+    <string name="duration">duration</string>
+    <string name="no_of_application">No of application</string>
+    <string name="posted_job">Posted Job</string>
 </resources>
