@@ -1,8 +1,9 @@
 package com.learning.careerconnect.Adapter
 
 import android.content.Context
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
-import com.learning.careerconnect.Model.SearchJobOM
+import com.learning.careerconnect.Model.SearchAllJobsOM
 import com.learning.careerconnect.databinding.SearchAllJobAdapterViewBinding
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,7 @@ import java.sql.Date
 import java.text.SimpleDateFormat
 
 class SearchJobAdapter(
-    private val items: ArrayList<SearchJobOM.Data.Data>,
+    private val items: ArrayList<SearchAllJobsOM.Data.Data>,
     private val context: Context
 ) : RecyclerView.Adapter<SearchJobAdapter.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
@@ -35,27 +36,17 @@ class SearchJobAdapter(
         {
             location+=(i+",")
         }
+
         holder.binding.nameOfRole.text = item.nameOfRole
         holder.binding.nameOfCompany.text = item.nameOfCompany
         holder.binding.location.text = location
         holder.binding.typeOfJob.text = item.typeOfJob
-        holder.binding.postedDate.text = item.postedDate?.let { convertLongToTime(it) }
-        holder.binding.noOfApplicant.text = item.noOfStudentsApplied.toString()
+        holder.binding.postedDate.text = item.postedDate?.let { " posted date"+convertLongToTime(it) }
         Glide
             .with(context)
             .load(item.companyLinks?.get(2)?.name)
             .placeholder(R.drawable.career_connect_white_bg)
             .into(holder.binding.imageOfCompany)
-        if(item.typeOfJob == "Internship" || item.typeOfJob == "Contract")
-        {
-            holder.binding.stipned.text = item.costToCompany
-            holder.binding.duration.text = item.durationOfInternship
-        }
-        else
-        {
-            holder.binding.stipned.visibility= View.INVISIBLE
-            holder.binding.duration.visibility= View.INVISIBLE
-        }
         // Set click listeners for different views
         holder.itemView.setOnClickListener {
             onClickListener?.onClick(position, item)
@@ -73,7 +64,7 @@ class SearchJobAdapter(
 
 
     interface OnClickListener {
-        fun onClick(position: Int, model: SearchJobOM.Data.Data)
+        fun onClick(position: Int, model: SearchAllJobsOM.Data.Data)
     }
 
     fun convertLongToTime(time: Long): String {

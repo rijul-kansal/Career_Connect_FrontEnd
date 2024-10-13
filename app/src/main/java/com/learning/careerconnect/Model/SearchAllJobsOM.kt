@@ -1,6 +1,6 @@
 package com.learning.careerconnect.Model
 
-data class SearchJobOM(
+data class SearchAllJobsOM(
     var `data`: Data? = null,
     var length: Int? = null, // 2
     var status: String? = null, // success

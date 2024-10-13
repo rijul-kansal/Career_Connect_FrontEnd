@@ -2,7 +2,6 @@
 <androidx.cardview.widget.CardView
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content"
     app:cardCornerRadius="16dp"
     android:layout_margin="16dp"
@@ -15,6 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_marginLeft="6dp"
@@ -41,6 +41,18 @@
             android:layout_height="wrap_content"
             android:text="@string/name_of_company"
             android:textSize="16sp"/>
+        <View
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dark_grey"/>
+        <LinearLayout
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        </LinearLayout>
         <LinearLayout
             android:layout_marginLeft="6dp"
             android:layout_marginTop="4dp"
@@ -61,13 +73,6 @@
                 android:text="@string/location"
                 android:textSize="12sp"
                 android:layout_weight="1"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_marginLeft="6dp"
-            android:layout_marginTop="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
@@ -82,34 +87,6 @@
                 android:text="@string/type_of_job"
                 android:textSize="12sp"
                 android:layout_weight="1"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/money_display_icon"
-                android:layout_gravity="right"/>
-            <TextView
-                android:layout_marginLeft="2dp"
-                android:gravity="center|left"
-                android:id="@+id/stipned"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:text="@string/stipned"
-                android:textSize="12sp"
-                android:layout_weight="1"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/calendar_display_icon"
-                android:layout_gravity="right"/>
-            <TextView
-                android:layout_marginLeft="2dp"
-                android:gravity="center|left"
-                android:id="@+id/duration"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:text="@string/duration"
-                android:textSize="12sp"
-                android:layout_weight="1"/>
         </LinearLayout>
         <TextView
             android:layout_marginTop="4dp"
@@ -118,15 +95,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/posted_job"
-            android:textSize="12sp"
-            android:layout_weight="1"/>
-        <TextView
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="6dp"
-            android:id="@+id/noOfApplicant"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_of_application"
             android:textSize="12sp"
             android:layout_weight="1"/>
     </LinearLayout>

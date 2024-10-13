@@ -8,18 +8,20 @@ import com.learning.careerconnect.Model.ResendOTPIM
 import com.learning.careerconnect.Model.ResendOTPOM
 import com.learning.careerconnect.Model.ResetPasswordIM
 import com.learning.careerconnect.Model.ResetPasswordOM
+import com.learning.careerconnect.Model.SearchAllJobsOM
 import com.learning.careerconnect.Model.SignUpIM
 import com.learning.careerconnect.Model.SignUpOM
 import com.learning.careerconnect.Model.UpdateMeIM
-//import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.Model.UpdateMeOM
 import com.learning.careerconnect.Model.VerifyOTPIM
 import com.learning.careerconnect.Model.VerifyOTPOM
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface Retrofit {
     @POST("/v1/authentication/signUp")
@@ -39,4 +41,16 @@ interface Retrofit {
 
     @POST("/v1/authentication/refreshToken")
     suspend fun refreshToken(@Header("authorization") authHeader:String, @Body body : RefreshTokenIM) : Response<RefreshTokenOM>
+    @GET("/v1/jobs/searchJobs")
+    suspend fun searchAllJobs(
+        @Header("authorization") authHeader:String,
+        @Query("preferredJobType") preferredJobType: String? = null,
+        @Query("skip") skip: String? = null,
+        @Query("limit") limit: String? = null,
+        @Query("typeOfJob") typeOfJob: String? = null,
+        @Query("location") location: String? = null,
+        @Query("skill") skill: String? = null,
+        @Query("companyNames") companyNames: String? = null,
+        @Query("easyApply") easyApply: String? = null,
+        @Query("time") time: String? = null) : Response<SearchAllJobsOM>
 }
