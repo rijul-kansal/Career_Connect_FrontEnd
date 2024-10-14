@@ -2,10 +2,12 @@ package com.learning.careerconnect.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +17,7 @@ import com.learning.careerconnect.Activity.BaseActivity
 import com.learning.careerconnect.Adapter.SearchJobAdapter
 import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.Model.SearchAllJobsOM
+import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.databinding.FragmentSearchJobBinding
 
@@ -23,12 +26,8 @@ class SearchJobFragment : Fragment() {
     lateinit var binding: FragmentSearchJobBinding
     lateinit var jobMVVM: JobMVVM
     lateinit var arrayListJobsMain: ArrayList<SearchAllJobsOM.Data.Data>
-    var x:Int=0
-    var y:Int=0
     lateinit var itemAdapter: SearchJobAdapter
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,7 +55,9 @@ class SearchJobFragment : Fragment() {
             null
         )
         jobMVVM.observerForSearchAllJobs().observe(viewLifecycleOwner, Observer { result ->
+            binding.refreshLayout.isRefreshing = false
             if (result.status == "success") {
+
                 arrayListJobsMain.clear()
                 Log.d("rk", result.toString())
                 for (i in 0..result.data!!.data!!.size - 1) {
@@ -65,6 +66,23 @@ class SearchJobFragment : Fragment() {
                 adapter(arrayListJobsMain)
             }
         })
+
+        binding.refreshLayout.setOnRefreshListener {
+            jobMVVM.searchAllJobs(
+                fragment = this,
+                token = "Bearer $token",
+                context = requireContext(),
+                null,
+                null,
+                "100",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        }
         return binding.root
     }
 
@@ -90,9 +108,5 @@ class SearchJobFragment : Fragment() {
                 binding.verticalProgressbar.progress = recyclerView.computeVerticalScrollOffset()
             }
         })
-
-
     }
-
-
 }
