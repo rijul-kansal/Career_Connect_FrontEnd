@@ -63,7 +63,7 @@ class SearchJobFragment : Fragment() {
                 for (i in 0..result.data!!.data!!.size - 1) {
                     result.data!!.data?.get(i)?.let { arrayListJobsMain.add(it) }
                 }
-                adapter(arrayListJobsMain)
+                adapter(arrayListJobsMain,0)
             }
         })
 
@@ -90,13 +90,14 @@ class SearchJobFragment : Fragment() {
         BaseActivity().toast(message, requireContext())
     }
 
-    fun adapter(lis: ArrayList<SearchAllJobsOM.Data.Data>) {
+    fun adapter(lis: ArrayList<SearchAllJobsOM.Data.Data>,pos:Int) {
         binding.recycleView.layoutManager = LinearLayoutManager(requireActivity())
-        itemAdapter = SearchJobAdapter(lis, requireContext())
+        itemAdapter = SearchJobAdapter(lis, requireContext(),310,pos)
         binding.recycleView.adapter = itemAdapter
         itemAdapter.setOnClickListener(object :
             SearchJobAdapter.OnClickListener {
             override fun onClick(position: Int, model: SearchAllJobsOM.Data.Data) {
+                model.nameOfCompany?.let { BaseActivity().toast(it,requireContext()) }
             }
         })
 
@@ -106,6 +107,12 @@ class SearchJobFragment : Fragment() {
                 val totalHeight = recyclerView.computeVerticalScrollRange() - recyclerView.height
                 binding.verticalProgressbar.max = totalHeight
                 binding.verticalProgressbar.progress = recyclerView.computeVerticalScrollOffset()
+            }
+        })
+
+        itemAdapter.setOnClickListenerDots(object : SearchJobAdapter.OnClickListenerDots {
+            override fun onClick(position: CharSequence) {
+                BaseActivity().toast("$position",requireContext())
             }
         })
     }
