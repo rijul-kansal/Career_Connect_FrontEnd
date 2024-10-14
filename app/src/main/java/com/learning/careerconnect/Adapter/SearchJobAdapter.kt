@@ -108,7 +108,7 @@ class SearchJobAdapter(
             } else {
                 (totalItems / 10) + 1
             }
-            if(currpos ==0)
+            if(currpos == 0)
             {
                 backBtn.visibility = View.INVISIBLE
                 forwardBtn.visibility = View.VISIBLE
@@ -120,31 +120,69 @@ class SearchJobAdapter(
             }
             if (totalDots <= 5) {
                 for (i in 0 until totalDots) {
-                    val textView = createDotTextView(i + 1)
+                    val textView = createDotTextView("${i + 1}")
                     dots.add(textView)
                     ll.addView(textView)
                 }
             } else {
-                for (i in 0 until 5) {
-                    val textView = createDotTextView(i + 1)
-                    dots.add(textView)
-                    ll.addView(textView)
-                }
-                for (i in 5 until 8) {
-                    val textView = TextView(context).apply {
-                        text = Html.fromHtml("&#8226;")
-                        textSize = 25F
+                if(currpos<=3)
+                {
+                    for (i in 0 until 5) {
+                        val textView = createDotTextView("${i + 1}")
+                        dots.add(textView)
+                        ll.addView(textView)
                     }
+                    val textView = createDotTextView("...")
                     dots.add(textView)
+                    val textView1 = createDotTextView("$totalDots")
+                    dots.add(textView1)
                     ll.addView(textView)
+                    ll.addView(textView1)
                 }
-                val textView = createDotTextView(totalItems)
-                dots.add(textView)
-                ll.addView(textView)
+                else if(currpos>=totalDots-4)
+                {
+                    val textView1 = createDotTextView("1")
+                    dots.add(textView1)
+                    ll.addView(textView1)
+                    val textViewD = createDotTextView("...")
+                    dots.add(textViewD)
+                    ll.addView(textViewD)
+                    for (i in totalDots-5 .. totalDots-1) {
+                        val textView = createDotTextView("${i + 1}")
+                        dots.add(textView)
+                        ll.addView(textView)
+                    }
+                }
+                else
+                {
+                    val textView1 = createDotTextView("1")
+                    dots.add(textView1)
+                    ll.addView(textView1)
+                    val textViewD = createDotTextView("...")
+                    dots.add(textViewD)
+                    ll.addView(textViewD)
+                    for (i in currpos-2 .. currpos) {
+                        val textView = createDotTextView("${i + 1}")
+                        dots.add(textView)
+                        ll.addView(textView)
+                    }
+                    val textViewDD = createDotTextView("...")
+                    dots.add(textViewDD)
+                    ll.addView(textViewDD)
+                    val textViewT = createDotTextView("$totalDots")
+                    dots.add(textViewT)
+                    ll.addView(textViewT)
+
+                }
             }
             if(dots.isNotEmpty())
             {
-                dots[currpos].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                if(currpos<=3)
+                dots[currpos-1].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                else if(totalDots-5 <currpos)
+                dots[currpos-totalDots+6].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                else
+                dots[3].setBackgroundResource(R.drawable.box_for_pagination_selected)
             }
             dots.forEachIndexed { index, textView ->
                 textView.setOnClickListener {
@@ -160,9 +198,10 @@ class SearchJobAdapter(
             }
         }
 
-        private fun createDotTextView(index: Int): TextView {
+        private fun createDotTextView(index: String): TextView {
             var textView =  TextView(context)
-            textView.text = "$index"
+            textView.text = index
+            textView.setTextColor(R.color.black)
             textView.setBackgroundResource(R.drawable.box_for_pagination_not_selected)
             textView.setPadding(30, 30, 30, 30)
             textView.textSize = 16F

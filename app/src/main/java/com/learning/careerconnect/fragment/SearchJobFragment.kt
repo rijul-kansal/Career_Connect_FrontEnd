@@ -28,7 +28,7 @@ class SearchJobFragment : Fragment() {
     lateinit var arrayListJobsMain: ArrayList<SearchAllJobsOM.Data.Data>
     lateinit var itemAdapter: SearchJobAdapter
 
-
+    var currposition =1
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,7 +63,7 @@ class SearchJobFragment : Fragment() {
                 for (i in 0..result.data!!.data!!.size - 1) {
                     result.data!!.data?.get(i)?.let { arrayListJobsMain.add(it) }
                 }
-                adapter(arrayListJobsMain,0)
+                adapter(arrayListJobsMain,currposition)
             }
         })
 
@@ -92,7 +92,7 @@ class SearchJobFragment : Fragment() {
 
     fun adapter(lis: ArrayList<SearchAllJobsOM.Data.Data>,pos:Int) {
         binding.recycleView.layoutManager = LinearLayoutManager(requireActivity())
-        itemAdapter = SearchJobAdapter(lis, requireContext(),310,pos)
+        itemAdapter = SearchJobAdapter(lis, requireContext(),255,pos)
         binding.recycleView.adapter = itemAdapter
         itemAdapter.setOnClickListener(object :
             SearchJobAdapter.OnClickListener {
@@ -113,6 +113,17 @@ class SearchJobFragment : Fragment() {
         itemAdapter.setOnClickListenerDots(object : SearchJobAdapter.OnClickListenerDots {
             override fun onClick(position: CharSequence) {
                 BaseActivity().toast("$position",requireContext())
+                if(position == "forwardBtn")
+                {
+                    currposition++
+                    adapter(lis,currposition)
+                }
+                else if(position == "backBtn")
+                {
+                    currposition--
+                    adapter(lis,currposition)
+                }
+
             }
         })
     }
