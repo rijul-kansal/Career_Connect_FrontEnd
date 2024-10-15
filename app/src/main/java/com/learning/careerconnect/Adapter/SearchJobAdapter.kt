@@ -1,7 +1,6 @@
 package com.learning.careerconnect.Adapter
 
 import android.content.Context
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -98,8 +97,8 @@ class SearchJobAdapter(
     inner class FooterViewHolder(binding: SearchAllJobsFooterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val ll = binding.indicatorLayout
-        private val backBtn = binding.backBtn
-        private val forwardBtn = binding.forwardBtn
+        private var backBtn = binding.backBtn
+        private var forwardBtn = binding.forwardBtn
         fun bind(totalItems: Int, currpos:Int) {
             dots.clear()
             ll.removeAllViews()
@@ -108,7 +107,12 @@ class SearchJobAdapter(
             } else {
                 (totalItems / 10) + 1
             }
-            if(currpos == 0)
+            if(totalItems<=10)
+            {
+                backBtn.visibility = View.GONE
+                forwardBtn.visibility = View.GONE
+            }
+            else if(currpos == 1)
             {
                 backBtn.visibility = View.INVISIBLE
                 forwardBtn.visibility = View.VISIBLE
