@@ -143,16 +143,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else if (isOnlyOneActivityInStack()) {
             if (doubleBackToExitPressedOnce) {
-//                showBackBtnDialog()
+                showBackBtnDialog("would you like to exit app",this)
                 return
             }
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, CropPrediction()).commit()
-//            supportActionBar?.setTitle("Crop Prediction")
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, SearchJobFragment()).commit()
+            supportActionBar?.setTitle("SearchJob")
             this.doubleBackToExitPressedOnce = true
             Handler(Looper.getMainLooper()).postDelayed(Runnable {
                 doubleBackToExitPressedOnce = false

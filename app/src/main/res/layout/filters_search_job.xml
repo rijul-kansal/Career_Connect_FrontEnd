@@ -28,7 +28,7 @@
             android:layout_height="1dp"
             android:background="@color/dark_grey"/>
         <TextView
-            android:id="@+id/tyypeOfJobTV"
+            android:id="@+id/typeOfJobTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/type_of_job_1"
@@ -84,7 +84,7 @@
             android:layout_height="1dp"
             android:background="@color/dark_grey"/>
         <TextView
-            android:id="@+id/easyApply"
+            android:id="@+id/easyApplyTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/easy_apply"

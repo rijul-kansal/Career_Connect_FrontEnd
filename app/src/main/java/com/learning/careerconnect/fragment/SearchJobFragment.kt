@@ -131,12 +131,30 @@ class SearchJobFragment : Fragment() {
             time
         )
     }
-
     private fun showFilterDialog()
     {
-        val imageDiaglog = Dialog(requireActivity(), R.style.PauseDialog)
-        imageDiaglog.setContentView(R.layout.filters_search_job)
-        imageDiaglog.window!!.setBackgroundDrawable(ColorDrawable(0))
-        imageDiaglog.show()
+        val diaglog = Dialog(requireActivity(), R.style.PauseDialog)
+        diaglog.setContentView(R.layout.filters_search_job)
+        diaglog.window!!.setBackgroundDrawable(ColorDrawable(0))
+
+        val preferredJobType = diaglog.findViewById<View>(R.id.preferedJobTypeTV)
+        val typeOfJob = diaglog.findViewById<View>(R.id.typeOfJobTV)
+        val location = diaglog.findViewById<View>(R.id.locationTV)
+        val skills = diaglog.findViewById<View>(R.id.skillsTV)
+        val companysName = diaglog.findViewById<View>(R.id.companyNamesTV)
+        val easyApply = diaglog.findViewById<View>(R.id.easyApplyTV)
+        val time = diaglog.findViewById<View>(R.id.timeTV)
+
+        preferredJobType.setOnClickListener {
+            BaseActivity().toast("hello",requireContext())
+            preferredJobType.setBackgroundResource(R.drawable.box_for_filters_selected)
+        }
+
+        typeOfJob.setOnClickListener {
+            typeOfJob.setBackgroundResource(R.drawable.box_for_filters_selected)
+        }
+        diaglog.show()
     }
+
+
 }
