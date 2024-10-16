@@ -10,4 +10,5 @@
     <color name="main_colour">#ba181b</color>
     <color name="dark_grey">#dee2e6</color>
     <color name="blue">#3a86ff</color>
+    <color name="liht_blue">#f6fff8</color>
 </resources>

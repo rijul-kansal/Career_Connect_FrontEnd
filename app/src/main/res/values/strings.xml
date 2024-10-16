@@ -66,4 +66,12 @@
     <string name="duration">duration</string>
     <string name="no_of_application">No of application</string>
     <string name="posted_job">Posted Job</string>
+    <string name="preferred_job_type">Preferred Job Type</string>
+    <string name="type_of_job_1">Type of Job</string>
+    <string name="skills">Skills</string>
+    <string name="company_names">Company Names</string>
+    <string name="easy_apply">Easy apply</string>
+    <string name="time">Time</string>
+    <string name="apply_filter">Apply Filter</string>
+    <string name="filter">Filter</string>
 </resources>

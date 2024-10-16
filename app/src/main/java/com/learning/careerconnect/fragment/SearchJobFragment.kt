@@ -1,6 +1,8 @@
 package com.learning.careerconnect.fragment
 
+import android.app.Dialog
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import com.learning.careerconnect.Activity.BaseActivity
 import com.learning.careerconnect.Adapter.SearchJobAdapter
 import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.Model.SearchAllJobsOM
+import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.databinding.FragmentSearchJobBinding
 
@@ -32,12 +35,17 @@ class SearchJobFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentSearchJobBinding.inflate(layoutInflater)
         jobMVVM = ViewModelProvider(requireActivity())[JobMVVM::class.java]
         arrayListJobsMain = ArrayList()
         val sharedPreference =
             requireActivity().getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
         token = sharedPreference.getString(Constants.JWT_TOKEN_SP, "rk").toString()
+
+        binding.filterOptionEnable.setOnClickListener {
+            showFilterDialog()
+        }
 
         callingSearchJobFn(null,null,null,null,null,null,null)
         jobMVVM.observerForSearchAllJobs().observe(viewLifecycleOwner, Observer { result ->
@@ -122,5 +130,13 @@ class SearchJobFragment : Fragment() {
             easyApply,
             time
         )
+    }
+
+    private fun showFilterDialog()
+    {
+        val imageDiaglog = Dialog(requireActivity(), R.style.PauseDialog)
+        imageDiaglog.setContentView(R.layout.filters_search_job)
+        imageDiaglog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        imageDiaglog.show()
     }
 }
