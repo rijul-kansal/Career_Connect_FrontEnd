@@ -8,12 +8,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.GridView
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.learning.careerconnect.Activity.BaseActivity
+import com.learning.careerconnect.Adapter.FiltersAdapter
 import com.learning.careerconnect.Adapter.SearchJobAdapter
 import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.Model.SearchAllJobsOM
@@ -29,7 +34,8 @@ class SearchJobFragment : Fragment() {
     lateinit var itemAdapter: SearchJobAdapter
     var totalItemCount:Int = 0
     lateinit var token:String
-
+    lateinit var rolesAvailable:ArrayList<String>
+    lateinit var skillsAvailable:ArrayList<String>
     var currposition =1
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,12 +45,15 @@ class SearchJobFragment : Fragment() {
         binding = FragmentSearchJobBinding.inflate(layoutInflater)
         jobMVVM = ViewModelProvider(requireActivity())[JobMVVM::class.java]
         arrayListJobsMain = ArrayList()
+        rolesAvailable = ArrayList()
+        skillsAvailable = ArrayList()
         val sharedPreference =
             requireActivity().getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
         token = sharedPreference.getString(Constants.JWT_TOKEN_SP, "rk").toString()
 
         binding.filterOptionEnable.setOnClickListener {
-            showFilterDialog()
+            binding.linearLayoutProgressBar.visibility= View.VISIBLE
+            jobMVVM.getAllTypeOfInfo(this,"Bearer ${token}",requireContext())
         }
 
         callingSearchJobFn(null,null,null,null,null,null,null)
@@ -58,6 +67,15 @@ class SearchJobFragment : Fragment() {
                     result.data!!.data?.get(i)?.let { arrayListJobsMain.add(it) }
                 }
                 adapter(arrayListJobsMain,currposition,totalItemCount)
+            }
+        })
+        jobMVVM.observerForgetAllTypeOfInfo().observe(viewLifecycleOwner, Observer { result ->
+            if (result.status == "success") {
+                Log.d("rk",result.toString())
+                binding.linearLayoutProgressBar.visibility= View.INVISIBLE
+                skillsAvailable = result.data!!.skill as ArrayList<String>
+                rolesAvailable = result.data!!.role as ArrayList<String>
+                showFilterDialog()
             }
         })
 
@@ -141,20 +159,68 @@ class SearchJobFragment : Fragment() {
         val typeOfJob = diaglog.findViewById<View>(R.id.typeOfJobTV)
         val location = diaglog.findViewById<View>(R.id.locationTV)
         val skills = diaglog.findViewById<View>(R.id.skillsTV)
-        val companysName = diaglog.findViewById<View>(R.id.companyNamesTV)
+        val companyName = diaglog.findViewById<View>(R.id.companyNamesTV)
         val easyApply = diaglog.findViewById<View>(R.id.easyApplyTV)
         val time = diaglog.findViewById<View>(R.id.timeTV)
-
+        val cancelBtn = diaglog.findViewById<View>(R.id.cancelBtn)
+        val applyFilter = diaglog.findViewById<View>(R.id.applyFilter)
+        val gridView = diaglog.findViewById<RecyclerView>(R.id.gridView)
+        Glide
+            .with(this)
+            .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/cancel.png")
+            .placeholder(R.drawable.career_connect_white_bg)
+            .into(cancelBtn as ImageView)
         preferredJobType.setOnClickListener {
-            BaseActivity().toast("hello",requireContext())
-            preferredJobType.setBackgroundResource(R.drawable.box_for_filters_selected)
-        }
+            val arr = ArrayList<String>()
+            arr.add("Internship")
+            arr.add("FullTime")
+            arr.add("PartTime")
+            arr.add("Contract")
+           gridView.layoutManager = LinearLayoutManager(requireActivity())
+            val adapter = FiltersAdapter(arr)
+            gridView.adapter = adapter
 
+            adapter.setOnClickListener(object :
+                FiltersAdapter.OnClickListener {
+                override fun onClick(position: Int, model: String) {
+                    Log.d("rk","pos $position name $model ")
+                }
+            })
+
+            makeEveryThingSimilar(typeOfJob,location,skills,companyName,easyApply,time,preferredJobType)
+        }
+        location.setOnClickListener {
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,time,location)
+        }
+        skills.setOnClickListener {
+            makeEveryThingSimilar(typeOfJob,preferredJobType,location,companyName,easyApply,time,skills)
+        }
+        companyName.setOnClickListener {
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,location,easyApply,time,companyName)
+        }
+        easyApply.setOnClickListener {
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,location,time,easyApply)
+        }
+        time.setOnClickListener {
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,location,time)
+        }
         typeOfJob.setOnClickListener {
-            typeOfJob.setBackgroundResource(R.drawable.box_for_filters_selected)
+            makeEveryThingSimilar(location,preferredJobType,skills,companyName,easyApply,time,typeOfJob)
+        }
+        cancelBtn.setOnClickListener {
+            diaglog.cancel()
         }
         diaglog.show()
     }
 
-
+    private fun makeEveryThingSimilar(v1:View,v2:View,v3:View,v4:View,v5:View,v6:View,v7:View)
+    {
+        v7.setBackgroundResource(R.drawable.box_for_filters_selected)
+        v1.setBackgroundResource(R.drawable.filter_box)
+        v2.setBackgroundResource(R.drawable.filter_box)
+        v3.setBackgroundResource(R.drawable.filter_box)
+        v4.setBackgroundResource(R.drawable.filter_box)
+        v5.setBackgroundResource(R.drawable.filter_box)
+        v6.setBackgroundResource(R.drawable.filter_box)
+    }
 }

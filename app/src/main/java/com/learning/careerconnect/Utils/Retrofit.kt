@@ -1,5 +1,6 @@
 package com.learning.careerconnect.Utils
 
+import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
 import com.learning.careerconnect.Model.RefreshTokenIM
@@ -53,4 +54,8 @@ interface Retrofit {
         @Query("companyNames") companyNames: String? = null,
         @Query("easyApply") easyApply: String? = null,
         @Query("time") time: String? = null) : Response<SearchAllJobsOM>
+
+    @GET("/v1/jobs/getAllJobTypes")
+    suspend fun getAllTypeOfInfo(
+        @Header("authorization") authHeader:String) : Response<GetAllTypeOfInformationOM>
 }
