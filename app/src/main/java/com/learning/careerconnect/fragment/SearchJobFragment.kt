@@ -71,7 +71,6 @@ class SearchJobFragment : Fragment() {
         })
         jobMVVM.observerForgetAllTypeOfInfo().observe(viewLifecycleOwner, Observer { result ->
             if (result.status == "success") {
-                Log.d("rk",result.toString())
                 binding.linearLayoutProgressBar.visibility= View.INVISIBLE
                 skillsAvailable = result.data!!.skill as ArrayList<String>
                 rolesAvailable = result.data!!.role as ArrayList<String>
@@ -151,6 +150,22 @@ class SearchJobFragment : Fragment() {
     }
     private fun showFilterDialog()
     {
+        var preferredJobTypeSet = mutableSetOf<Int>()
+        var preferredJobTypeArr = ArrayList<String>()
+        preferredJobTypeArr.add("Internship")
+        preferredJobTypeArr.add("FullTime")
+        preferredJobTypeArr.add("PartTime")
+        preferredJobTypeArr.add("Contract")
+
+        var skillsSet  = mutableSetOf<Int>()
+        var typeOfJobSet = mutableSetOf<Int>()
+
+
+        var timeSet = mutableSetOf<Int>()
+        var timeArr = ArrayList<String>()
+        timeArr.add("Last 24 Hours")
+        timeArr.add("Last 3 Days")
+        timeArr.add("Last 7 Days")
         val diaglog = Dialog(requireActivity(), R.style.PauseDialog)
         diaglog.setContentView(R.layout.filters_search_job)
         diaglog.window!!.setBackgroundDrawable(ColorDrawable(0))
@@ -165,35 +180,89 @@ class SearchJobFragment : Fragment() {
         val cancelBtn = diaglog.findViewById<View>(R.id.cancelBtn)
         val applyFilter = diaglog.findViewById<View>(R.id.applyFilter)
         val gridView = diaglog.findViewById<RecyclerView>(R.id.gridView)
+        gridView.layoutManager = LinearLayoutManager(requireActivity())
         Glide
             .with(this)
             .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/cancel.png")
             .placeholder(R.drawable.career_connect_white_bg)
             .into(cancelBtn as ImageView)
         preferredJobType.setOnClickListener {
-            val arr = ArrayList<String>()
-            arr.add("Internship")
-            arr.add("FullTime")
-            arr.add("PartTime")
-            arr.add("Contract")
-           gridView.layoutManager = LinearLayoutManager(requireActivity())
-            val adapter = FiltersAdapter(arr)
+            val adapter = FiltersAdapter(preferredJobTypeArr)
             gridView.adapter = adapter
-
             adapter.setOnClickListener(object :
                 FiltersAdapter.OnClickListener {
                 override fun onClick(position: Int, model: String) {
-                    Log.d("rk","pos $position name $model ")
+                   if(preferredJobTypeSet.contains(position))
+                   {
+                       preferredJobTypeSet.remove(position)
+                   }
+                    else
+                   {
+                       preferredJobTypeSet.add(position)
+                   }
                 }
             })
 
             makeEveryThingSimilar(typeOfJob,location,skills,companyName,easyApply,time,preferredJobType)
         }
-        location.setOnClickListener {
-            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,time,location)
-        }
         skills.setOnClickListener {
             makeEveryThingSimilar(typeOfJob,preferredJobType,location,companyName,easyApply,time,skills)
+            val adapter = FiltersAdapter(skillsAvailable)
+            gridView.adapter = adapter
+            adapter.setOnClickListener(object :
+                FiltersAdapter.OnClickListener {
+                override fun onClick(position: Int, model: String) {
+                    if(skillsSet.contains(position))
+                    {
+                        skillsSet.remove(position)
+                    }
+                    else
+                    {
+                        skillsSet.add(position)
+                    }
+                }
+            })
+        }
+        typeOfJob.setOnClickListener {
+            makeEveryThingSimilar(location,preferredJobType,skills,companyName,easyApply,time,typeOfJob)
+
+            val adapter = FiltersAdapter(rolesAvailable)
+            gridView.adapter = adapter
+            adapter.setOnClickListener(object :
+                FiltersAdapter.OnClickListener {
+                override fun onClick(position: Int, model: String) {
+                    if(typeOfJobSet.contains(position))
+                    {
+                        typeOfJobSet.remove(position)
+                    }
+                    else
+                    {
+                        typeOfJobSet.add(position)
+                    }
+                }
+            })
+
+        }
+        time.setOnClickListener {
+            val adapter = FiltersAdapter(timeArr)
+            gridView.adapter = adapter
+            adapter.setOnClickListener(object :
+                FiltersAdapter.OnClickListener {
+                override fun onClick(position: Int, model: String) {
+                    if(timeSet.contains(position))
+                    {
+                        timeSet.remove(position)
+                    }
+                    else
+                    {
+                        timeSet.add(position)
+                    }
+                }
+            })
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,location,time)
+        }
+        location.setOnClickListener {
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,time,location)
         }
         companyName.setOnClickListener {
             makeEveryThingSimilar(typeOfJob,preferredJobType,skills,location,easyApply,time,companyName)
@@ -201,14 +270,48 @@ class SearchJobFragment : Fragment() {
         easyApply.setOnClickListener {
             makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,location,time,easyApply)
         }
-        time.setOnClickListener {
-            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,location,time)
-        }
-        typeOfJob.setOnClickListener {
-            makeEveryThingSimilar(location,preferredJobType,skills,companyName,easyApply,time,typeOfJob)
-        }
         cancelBtn.setOnClickListener {
             diaglog.cancel()
+        }
+        applyFilter.setOnClickListener {
+
+            var preferedJobTypeString = ""
+            var typeOfJobString=""
+            var skillsString=""
+            var timeString=""
+            for(ele in preferredJobTypeSet)
+            {
+                preferedJobTypeString+=preferredJobTypeArr[ele]
+                preferedJobTypeString+=","
+            }
+            for(ele in typeOfJobSet)
+            {
+                typeOfJobString+=rolesAvailable[ele]
+                typeOfJobString+=","
+            }
+            for(ele in skillsSet)
+            {
+                skillsString+=skillsAvailable[ele]
+                skillsString+=","
+            }
+            for(ele in timeSet)
+            {
+                timeString+=timeArr[ele]
+                timeString+=","
+            }
+
+            if(preferedJobTypeString.length>0)
+                preferedJobTypeString=preferedJobTypeString.dropLast(1)
+            if(typeOfJobString.length>0)
+                typeOfJobString=typeOfJobString.dropLast(1)
+            if(skillsString.length>0)
+                skillsString=skillsString.dropLast(1)
+            if(timeString.length>0)
+                timeString = timeString.dropLast(1)
+            Log.d("rk",preferedJobTypeString)
+            Log.d("rk",typeOfJobString)
+            Log.d("rk",skillsString)
+            Log.d("rk",timeString)
         }
         diaglog.show()
     }

@@ -1,10 +1,14 @@
 package com.learning.careerconnect.Adapter
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.resource.drawable.DrawableResource
+import com.learning.careerconnect.R
 import com.learning.careerconnect.databinding.GridViewBinding
 
 class FiltersAdapter(
@@ -26,6 +30,14 @@ class FiltersAdapter(
 
         holder.itemView.setOnClickListener {
             onClickListener?.onClick(position, item)
+
+            if (holder.binding.gridViewTextView.background.constantState ==
+                ContextCompat.getDrawable(holder.binding.gridViewTextView.context, R.drawable.main_colour_border_bg_btn_inside_grey)?.constantState) {
+                holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_white_colour)
+            } else {
+                holder.binding.gridViewTextView.setBackgroundResource(R.drawable.main_colour_border_bg_btn_inside_grey)
+            }
+
         }
 
     }
