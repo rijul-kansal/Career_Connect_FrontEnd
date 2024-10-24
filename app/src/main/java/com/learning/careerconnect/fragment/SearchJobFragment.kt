@@ -8,8 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.GridView
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -148,8 +146,8 @@ class SearchJobFragment : Fragment() {
             time
         )
     }
-    private fun showFilterDialog()
-    {
+    private fun showFilterDialog() {
+//        Todo only allow single time
         var preferredJobTypeSet = mutableSetOf<Int>()
         var preferredJobTypeArr = ArrayList<String>()
         preferredJobTypeArr.add("Internship")
@@ -166,6 +164,10 @@ class SearchJobFragment : Fragment() {
         timeArr.add("Last 24 Hours")
         timeArr.add("Last 3 Days")
         timeArr.add("Last 7 Days")
+
+        var easyApplySet = mutableSetOf<Int>()
+        var easyApplyArr = ArrayList<String>()
+        easyApplyArr.add("YES")
         val diaglog = Dialog(requireActivity(), R.style.PauseDialog)
         diaglog.setContentView(R.layout.filters_search_job)
         diaglog.window!!.setBackgroundDrawable(ColorDrawable(0))
@@ -187,7 +189,7 @@ class SearchJobFragment : Fragment() {
             .placeholder(R.drawable.career_connect_white_bg)
             .into(cancelBtn as ImageView)
         preferredJobType.setOnClickListener {
-            val adapter = FiltersAdapter(preferredJobTypeArr)
+            val adapter = FiltersAdapter(preferredJobTypeArr,preferredJobTypeSet)
             gridView.adapter = adapter
             adapter.setOnClickListener(object :
                 FiltersAdapter.OnClickListener {
@@ -207,7 +209,7 @@ class SearchJobFragment : Fragment() {
         }
         skills.setOnClickListener {
             makeEveryThingSimilar(typeOfJob,preferredJobType,location,companyName,easyApply,time,skills)
-            val adapter = FiltersAdapter(skillsAvailable)
+            val adapter = FiltersAdapter(skillsAvailable,skillsSet)
             gridView.adapter = adapter
             adapter.setOnClickListener(object :
                 FiltersAdapter.OnClickListener {
@@ -226,7 +228,7 @@ class SearchJobFragment : Fragment() {
         typeOfJob.setOnClickListener {
             makeEveryThingSimilar(location,preferredJobType,skills,companyName,easyApply,time,typeOfJob)
 
-            val adapter = FiltersAdapter(rolesAvailable)
+            val adapter = FiltersAdapter(rolesAvailable,typeOfJobSet)
             gridView.adapter = adapter
             adapter.setOnClickListener(object :
                 FiltersAdapter.OnClickListener {
@@ -244,7 +246,7 @@ class SearchJobFragment : Fragment() {
 
         }
         time.setOnClickListener {
-            val adapter = FiltersAdapter(timeArr)
+            val adapter = FiltersAdapter(timeArr,timeSet)
             gridView.adapter = adapter
             adapter.setOnClickListener(object :
                 FiltersAdapter.OnClickListener {
@@ -261,15 +263,31 @@ class SearchJobFragment : Fragment() {
             })
             makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,location,time)
         }
+        easyApply.setOnClickListener {
+            val adapter = FiltersAdapter(easyApplyArr,easyApplySet)
+            gridView.adapter = adapter
+            adapter.setOnClickListener(object :
+                FiltersAdapter.OnClickListener {
+                override fun onClick(position: Int, model: String) {
+                    if(easyApplySet.contains(position))
+                    {
+                        easyApplySet.remove(position)
+                    }
+                    else
+                    {
+                        easyApplySet.add(position)
+                    }
+                }
+            })
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,location,time,easyApply)
+        }
         location.setOnClickListener {
             makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,time,location)
         }
         companyName.setOnClickListener {
             makeEveryThingSimilar(typeOfJob,preferredJobType,skills,location,easyApply,time,companyName)
         }
-        easyApply.setOnClickListener {
-            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,location,time,easyApply)
-        }
+
         cancelBtn.setOnClickListener {
             diaglog.cancel()
         }
@@ -279,6 +297,7 @@ class SearchJobFragment : Fragment() {
             var typeOfJobString=""
             var skillsString=""
             var timeString=""
+            var easyApplyString=""
             for(ele in preferredJobTypeSet)
             {
                 preferedJobTypeString+=preferredJobTypeArr[ele]
@@ -308,10 +327,16 @@ class SearchJobFragment : Fragment() {
                 skillsString=skillsString.dropLast(1)
             if(timeString.length>0)
                 timeString = timeString.dropLast(1)
+            if(easyApplySet.size >0 )
+            {
+                easyApplyString="1"
+            }
+
             Log.d("rk",preferedJobTypeString)
             Log.d("rk",typeOfJobString)
             Log.d("rk",skillsString)
             Log.d("rk",timeString)
+            Log.d("rk",easyApplyString)
         }
         diaglog.show()
     }

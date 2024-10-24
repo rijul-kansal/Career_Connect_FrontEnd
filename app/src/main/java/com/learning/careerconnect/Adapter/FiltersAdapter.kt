@@ -1,18 +1,15 @@
 package com.learning.careerconnect.Adapter
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.resource.drawable.DrawableResource
 import com.learning.careerconnect.R
 import com.learning.careerconnect.databinding.GridViewBinding
 
 class FiltersAdapter(
-    private val items: ArrayList<String>
+    private val items: ArrayList<String>,
+    private val sets: MutableSet<Int>
 ) : RecyclerView.Adapter<FiltersAdapter.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,7 +24,9 @@ class FiltersAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.binding.gridViewTextView.text = item
-
+        if (sets.contains(position)) {
+            holder.binding.gridViewTextView.setBackgroundResource(R.drawable.main_colour_border_bg_btn_inside_grey)
+        }
         holder.itemView.setOnClickListener {
             onClickListener?.onClick(position, item)
 
