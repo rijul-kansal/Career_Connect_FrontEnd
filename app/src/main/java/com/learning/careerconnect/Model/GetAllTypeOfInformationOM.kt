@@ -6,6 +6,7 @@ data class GetAllTypeOfInformationOM(
 ) {
     data class Data(
         var role: List<String?>? = null,
-        var skill: List<String?>? = null
+        var skill: List<String?>? = null,
+        var location: List<String?>? = null
     )
 }

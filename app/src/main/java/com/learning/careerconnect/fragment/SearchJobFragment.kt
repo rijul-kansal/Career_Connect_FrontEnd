@@ -34,6 +34,7 @@ class SearchJobFragment : Fragment() {
     lateinit var token:String
     lateinit var rolesAvailable:ArrayList<String>
     lateinit var skillsAvailable:ArrayList<String>
+    lateinit var locationAvailable:ArrayList<String>
     var currposition =1
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +45,7 @@ class SearchJobFragment : Fragment() {
         jobMVVM = ViewModelProvider(requireActivity())[JobMVVM::class.java]
         arrayListJobsMain = ArrayList()
         rolesAvailable = ArrayList()
+        locationAvailable = ArrayList()
         skillsAvailable = ArrayList()
         val sharedPreference =
             requireActivity().getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
@@ -72,6 +74,7 @@ class SearchJobFragment : Fragment() {
                 binding.linearLayoutProgressBar.visibility= View.INVISIBLE
                 skillsAvailable = result.data!!.skill as ArrayList<String>
                 rolesAvailable = result.data!!.role as ArrayList<String>
+                locationAvailable = result.data!!.location as ArrayList<String>
                 showFilterDialog()
             }
         })
@@ -157,6 +160,7 @@ class SearchJobFragment : Fragment() {
 
         var skillsSet  = mutableSetOf<Int>()
         var typeOfJobSet = mutableSetOf<Int>()
+        var locationSet = mutableSetOf<Int>()
 
 
         var timeSet = mutableSetOf<Int>()
@@ -168,6 +172,8 @@ class SearchJobFragment : Fragment() {
         var easyApplySet = mutableSetOf<Int>()
         var easyApplyArr = ArrayList<String>()
         easyApplyArr.add("YES")
+
+
         val diaglog = Dialog(requireActivity(), R.style.PauseDialog)
         diaglog.setContentView(R.layout.filters_search_job)
         diaglog.window!!.setBackgroundDrawable(ColorDrawable(0))
@@ -176,7 +182,6 @@ class SearchJobFragment : Fragment() {
         val typeOfJob = diaglog.findViewById<View>(R.id.typeOfJobTV)
         val location = diaglog.findViewById<View>(R.id.locationTV)
         val skills = diaglog.findViewById<View>(R.id.skillsTV)
-        val companyName = diaglog.findViewById<View>(R.id.companyNamesTV)
         val easyApply = diaglog.findViewById<View>(R.id.easyApplyTV)
         val time = diaglog.findViewById<View>(R.id.timeTV)
         val cancelBtn = diaglog.findViewById<View>(R.id.cancelBtn)
@@ -205,10 +210,10 @@ class SearchJobFragment : Fragment() {
                 }
             })
 
-            makeEveryThingSimilar(typeOfJob,location,skills,companyName,easyApply,time,preferredJobType)
+            makeEveryThingSimilar(typeOfJob,location,skills,easyApply,time,preferredJobType)
         }
         skills.setOnClickListener {
-            makeEveryThingSimilar(typeOfJob,preferredJobType,location,companyName,easyApply,time,skills)
+            makeEveryThingSimilar(typeOfJob,preferredJobType,location,easyApply,time,skills)
             val adapter = FiltersAdapter(skillsAvailable,skillsSet)
             gridView.adapter = adapter
             adapter.setOnClickListener(object :
@@ -226,7 +231,7 @@ class SearchJobFragment : Fragment() {
             })
         }
         typeOfJob.setOnClickListener {
-            makeEveryThingSimilar(location,preferredJobType,skills,companyName,easyApply,time,typeOfJob)
+            makeEveryThingSimilar(location,preferredJobType,skills,easyApply,time,typeOfJob)
 
             val adapter = FiltersAdapter(rolesAvailable,typeOfJobSet)
             gridView.adapter = adapter
@@ -246,22 +251,23 @@ class SearchJobFragment : Fragment() {
 
         }
         time.setOnClickListener {
-            val adapter = FiltersAdapter(timeArr,timeSet)
+            val adapter = FiltersAdapter(timeArr,timeSet,"Time")
             gridView.adapter = adapter
             adapter.setOnClickListener(object :
                 FiltersAdapter.OnClickListener {
                 override fun onClick(position: Int, model: String) {
                     if(timeSet.contains(position))
                     {
-                        timeSet.remove(position)
+                        timeSet.clear()
                     }
                     else
                     {
+                        timeSet.clear()
                         timeSet.add(position)
                     }
                 }
             })
-            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,location,time)
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,easyApply,location,time)
         }
         easyApply.setOnClickListener {
             val adapter = FiltersAdapter(easyApplyArr,easyApplySet)
@@ -279,13 +285,26 @@ class SearchJobFragment : Fragment() {
                     }
                 }
             })
-            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,location,time,easyApply)
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,location,time,easyApply)
         }
         location.setOnClickListener {
-            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,companyName,easyApply,time,location)
-        }
-        companyName.setOnClickListener {
-            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,location,easyApply,time,companyName)
+
+            val adapter = FiltersAdapter(locationAvailable,locationSet)
+            gridView.adapter = adapter
+            adapter.setOnClickListener(object :
+                FiltersAdapter.OnClickListener {
+                override fun onClick(position: Int, model: String) {
+                    if(locationSet.contains(position))
+                    {
+                        locationSet.remove(position)
+                    }
+                    else
+                    {
+                        locationSet.add(position)
+                    }
+                }
+            })
+            makeEveryThingSimilar(typeOfJob,preferredJobType,skills,easyApply,time,location)
         }
 
         cancelBtn.setOnClickListener {
@@ -298,6 +317,7 @@ class SearchJobFragment : Fragment() {
             var skillsString=""
             var timeString=""
             var easyApplyString=""
+            var locationString=""
             for(ele in preferredJobTypeSet)
             {
                 preferedJobTypeString+=preferredJobTypeArr[ele]
@@ -312,6 +332,11 @@ class SearchJobFragment : Fragment() {
             {
                 skillsString+=skillsAvailable[ele]
                 skillsString+=","
+            }
+            for(ele in locationSet)
+            {
+                locationString+=locationAvailable[ele]
+                locationString+=","
             }
             for(ele in timeSet)
             {
@@ -331,17 +356,21 @@ class SearchJobFragment : Fragment() {
             {
                 easyApplyString="1"
             }
-
+            if(locationSet.size>0)
+            {
+                locationString=locationString.dropLast(1)
+            }
             Log.d("rk",preferedJobTypeString)
             Log.d("rk",typeOfJobString)
             Log.d("rk",skillsString)
             Log.d("rk",timeString)
             Log.d("rk",easyApplyString)
+            Log.d("rk",locationString)
         }
         diaglog.show()
     }
 
-    private fun makeEveryThingSimilar(v1:View,v2:View,v3:View,v4:View,v5:View,v6:View,v7:View)
+    private fun makeEveryThingSimilar(v1:View,v2:View,v3:View,v4:View,v5:View,v7:View)
     {
         v7.setBackgroundResource(R.drawable.box_for_filters_selected)
         v1.setBackgroundResource(R.drawable.filter_box)
@@ -349,6 +378,5 @@ class SearchJobFragment : Fragment() {
         v3.setBackgroundResource(R.drawable.filter_box)
         v4.setBackgroundResource(R.drawable.filter_box)
         v5.setBackgroundResource(R.drawable.filter_box)
-        v6.setBackgroundResource(R.drawable.filter_box)
     }
 }
