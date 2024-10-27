@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -36,6 +37,24 @@ class SearchJobFragment : Fragment() {
     lateinit var skillsAvailable:ArrayList<String>
     lateinit var locationAvailable:ArrayList<String>
     var currposition =1
+
+    var ps: String? = null
+    var ts: String? =  null
+    var ss: String? =  null
+    var tts: String? =  null
+    var es: String? = null
+    var ls: String? =  null
+    var preferredJobTypeSet = mutableSetOf<Int>()
+    var preferredJobTypeArr = ArrayList<String>()
+    var skillsSet  = mutableSetOf<Int>()
+    var typeOfJobSet = mutableSetOf<Int>()
+    var locationSet = mutableSetOf<Int>()
+    var timeSet = mutableSetOf<Int>()
+    var timeArr = ArrayList<String>()
+    var easyApplySet = mutableSetOf<Int>()
+    var easyApplyArr = ArrayList<String>()
+
+    var diaglog:Dialog?=null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,10 +75,15 @@ class SearchJobFragment : Fragment() {
             jobMVVM.getAllTypeOfInfo(this,"Bearer ${token}",requireContext())
         }
 
-        callingSearchJobFn(null,null,null,null,null,null,null)
+        callingSearchJobFn()
         jobMVVM.observerForSearchAllJobs().observe(viewLifecycleOwner, Observer { result ->
             binding.refreshLayout.isRefreshing = false
             if (result.status == "success") {
+                if(diaglog!=null)
+                {
+                    diaglog!!.cancel()
+                    diaglog=null
+                }
                 totalItemCount= result.totalJobs!!.toInt()
                 Log.d("rk",totalItemCount.toString())
                 arrayListJobsMain.clear()
@@ -81,7 +105,7 @@ class SearchJobFragment : Fragment() {
 
         binding.refreshLayout.setOnRefreshListener {
             currposition=1
-            callingSearchJobFn(null,null,null,null,null,null,null)
+            callingSearchJobFn()
         }
         return binding.root
     }
@@ -116,77 +140,55 @@ class SearchJobFragment : Fragment() {
                 if(position == "forwardBtn")
                 {
                     currposition++
-                    callingSearchJobFn(null,null,null,null,null,null,null)
+                    callingSearchJobFn()
                 }
                 else if(position == "backBtn")
                 {
                     currposition--
-                    callingSearchJobFn(null,null,null,null,null,null,null)
+                    callingSearchJobFn()
                 }
                 else if(position != "...")
                 {
                     currposition=position.toString().toInt()
-                    callingSearchJobFn(null,null,null,null,null,null,null)
+                    callingSearchJobFn()
                 }
 
             }
         })
     }
 
-    fun callingSearchJobFn(preferredJobType:String?,typeOfJob:String?,location:String?,skill:String?,compantNames:String?,easyApply:String?,time:String?) {
+    fun callingSearchJobFn() {
         jobMVVM.searchAllJobs(
             fragment = this@SearchJobFragment,
             token = "Bearer $token",
             context = requireContext(),
-            preferredJobType,
+            ts,
             "${currposition-1}",
             "10",
-            typeOfJob,
-            location,
-            skill,
-            compantNames,
-            easyApply,
-            time
+            ps,
+            ls,
+            ss,
+            null,
+            es,
+            tts
         )
     }
     private fun showFilterDialog() {
-//        Todo only allow single time
-        var preferredJobTypeSet = mutableSetOf<Int>()
-        var preferredJobTypeArr = ArrayList<String>()
-        preferredJobTypeArr.add("Internship")
-        preferredJobTypeArr.add("FullTime")
-        preferredJobTypeArr.add("PartTime")
-        preferredJobTypeArr.add("Contract")
+        fillingDetails()
+        diaglog = Dialog(requireActivity(), R.style.PauseDialog)
+        diaglog!!.setContentView(R.layout.filters_search_job)
+        diaglog!!.window!!.setBackgroundDrawable(ColorDrawable(0))
 
-        var skillsSet  = mutableSetOf<Int>()
-        var typeOfJobSet = mutableSetOf<Int>()
-        var locationSet = mutableSetOf<Int>()
-
-
-        var timeSet = mutableSetOf<Int>()
-        var timeArr = ArrayList<String>()
-        timeArr.add("Last 24 Hours")
-        timeArr.add("Last 3 Days")
-        timeArr.add("Last 7 Days")
-
-        var easyApplySet = mutableSetOf<Int>()
-        var easyApplyArr = ArrayList<String>()
-        easyApplyArr.add("YES")
-
-
-        val diaglog = Dialog(requireActivity(), R.style.PauseDialog)
-        diaglog.setContentView(R.layout.filters_search_job)
-        diaglog.window!!.setBackgroundDrawable(ColorDrawable(0))
-
-        val preferredJobType = diaglog.findViewById<View>(R.id.preferedJobTypeTV)
-        val typeOfJob = diaglog.findViewById<View>(R.id.typeOfJobTV)
-        val location = diaglog.findViewById<View>(R.id.locationTV)
-        val skills = diaglog.findViewById<View>(R.id.skillsTV)
-        val easyApply = diaglog.findViewById<View>(R.id.easyApplyTV)
-        val time = diaglog.findViewById<View>(R.id.timeTV)
-        val cancelBtn = diaglog.findViewById<View>(R.id.cancelBtn)
-        val applyFilter = diaglog.findViewById<View>(R.id.applyFilter)
-        val gridView = diaglog.findViewById<RecyclerView>(R.id.gridView)
+        val preferredJobType = diaglog!!.findViewById<View>(R.id.preferedJobTypeTV)
+        val typeOfJob = diaglog!!.findViewById<View>(R.id.typeOfJobTV)
+        val location = diaglog!!.findViewById<View>(R.id.locationTV)
+        val skills = diaglog!!.findViewById<View>(R.id.skillsTV)
+        val easyApply = diaglog!!.findViewById<View>(R.id.easyApplyTV)
+        val time = diaglog!!.findViewById<View>(R.id.timeTV)
+        val cancelBtn = diaglog!!.findViewById<View>(R.id.cancelBtn)
+        val applyFilter = diaglog!!.findViewById<View>(R.id.applyFilter)
+        val gridView = diaglog!!.findViewById<RecyclerView>(R.id.gridView)
+        val progressBar = diaglog!!.findViewById<ProgressBar>(R.id.gridViewProgressBar)
         gridView.layoutManager = LinearLayoutManager(requireActivity())
         Glide
             .with(this)
@@ -306,9 +308,9 @@ class SearchJobFragment : Fragment() {
             })
             makeEveryThingSimilar(typeOfJob,preferredJobType,skills,easyApply,time,location)
         }
-
         cancelBtn.setOnClickListener {
-            diaglog.cancel()
+            diaglog!!.cancel()
+            diaglog=null
         }
         applyFilter.setOnClickListener {
 
@@ -338,10 +340,11 @@ class SearchJobFragment : Fragment() {
                 locationString+=locationAvailable[ele]
                 locationString+=","
             }
-            for(ele in timeSet)
+            if(timeSet.size ==1)
             {
-                timeString+=timeArr[ele]
-                timeString+=","
+                if(timeSet.contains(0)) timeString="1"
+                else if(timeSet.contains(1)) timeString="2"
+                else timeString="3"
             }
 
             if(preferedJobTypeString.length>0)
@@ -350,24 +353,29 @@ class SearchJobFragment : Fragment() {
                 typeOfJobString=typeOfJobString.dropLast(1)
             if(skillsString.length>0)
                 skillsString=skillsString.dropLast(1)
-            if(timeString.length>0)
-                timeString = timeString.dropLast(1)
-            if(easyApplySet.size >0 )
-            {
+            if(easyApplySet.size >0)
                 easyApplyString="1"
-            }
             if(locationSet.size>0)
-            {
                 locationString=locationString.dropLast(1)
-            }
             Log.d("rk",preferedJobTypeString)
             Log.d("rk",typeOfJobString)
             Log.d("rk",skillsString)
             Log.d("rk",timeString)
             Log.d("rk",easyApplyString)
             Log.d("rk",locationString)
+            ps = if (preferedJobTypeString.isNotEmpty()) preferedJobTypeString else null
+            ts = if (typeOfJobString.isNotEmpty()) typeOfJobString else null
+            ss = if (skillsString.isNotEmpty()) skillsString else null
+            tts = if (timeString.isNotEmpty()) timeString else null
+            es= if (easyApplyString.isNotEmpty()) easyApplyString else null
+            ls = if (locationString.isNotEmpty()) locationString else null
+
+
+            progressBar.visibility = View.VISIBLE
+            jobMVVM.searchAllJobs(
+                this,"Bearer $token",requireContext(),ts,"0","10", ps,ls,ss,null,es,tts)
         }
-        diaglog.show()
+        diaglog!!.show()
     }
 
     private fun makeEveryThingSimilar(v1:View,v2:View,v3:View,v4:View,v5:View,v7:View)
@@ -378,5 +386,20 @@ class SearchJobFragment : Fragment() {
         v3.setBackgroundResource(R.drawable.filter_box)
         v4.setBackgroundResource(R.drawable.filter_box)
         v5.setBackgroundResource(R.drawable.filter_box)
+    }
+
+    fun fillingDetails()
+    {
+        preferredJobTypeArr.clear()
+        timeArr.clear()
+        easyApplyArr.clear()
+        preferredJobTypeArr.add("Internship")
+        preferredJobTypeArr.add("FullTime")
+        preferredJobTypeArr.add("PartTime")
+        preferredJobTypeArr.add("Contract")
+        timeArr.add("Last 24 Hours")
+        timeArr.add("Last 3 Days")
+        timeArr.add("Last 7 Days")
+        easyApplyArr.add("YES")
     }
 }

@@ -112,7 +112,7 @@
         android:layout_width="267dp"
         android:layout_height="649dp"
         android:layout_marginLeft="110dp"
-        app:layout_constraintBottom_toTopOf="@id/applyFilter"
+        app:layout_constraintBottom_toTopOf="@id/gridViewLL"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toRightOf="@id/view"
         app:layout_constraintRight_toRightOf="parent"
@@ -126,13 +126,27 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/career_connect_white_bg"/>
-    <Button
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:id="@+id/applyFilter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+    <LinearLayout
+        android:padding="8dp"
+        android:background="@color/main_colour"
+        android:id="@+id/gridViewLL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/apply_filter"/>
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/applyFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="@string/apply_filter"/>
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/gridViewProgressBar"
+            android:layout_marginLeft="8dp"
+            android:layout_width="30dp"
+            android:layout_height="50dp"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
