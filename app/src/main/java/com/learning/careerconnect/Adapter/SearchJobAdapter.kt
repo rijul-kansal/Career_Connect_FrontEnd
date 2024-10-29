@@ -128,7 +128,8 @@ class SearchJobAdapter(
                     dots.add(textView)
                     ll.addView(textView)
                 }
-            } else {
+            }
+            else {
                 if(currpos<=3)
                 {
                     for (i in 0 until 5) {
@@ -181,12 +182,20 @@ class SearchJobAdapter(
             }
             if(dots.isNotEmpty())
             {
-                if(currpos<=3)
-                dots[currpos-1].setBackgroundResource(R.drawable.box_for_pagination_selected)
-                else if(totalDots-5 <currpos)
-                dots[currpos-totalDots+6].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                if(totalDots<=5)
+                {
+                    dots[currpos-1].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                }
                 else
-                dots[3].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                {
+                    if(currpos<=3)
+                        dots[currpos-1].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                    else if(totalDots-5 <currpos)
+                        dots[currpos-totalDots+6].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                    else
+                        dots[3].setBackgroundResource(R.drawable.box_for_pagination_selected)
+                }
+
             }
             dots.forEachIndexed { index, textView ->
                 textView.setOnClickListener {

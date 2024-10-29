@@ -78,6 +78,7 @@ class SearchJobFragment : Fragment() {
         callingSearchJobFn()
         jobMVVM.observerForSearchAllJobs().observe(viewLifecycleOwner, Observer { result ->
             binding.refreshLayout.isRefreshing = false
+            binding.linearLayoutProgressBarDisable.visibility = View.INVISIBLE
             if (result.status == "success") {
                 if(diaglog!=null)
                 {
@@ -106,6 +107,12 @@ class SearchJobFragment : Fragment() {
         binding.refreshLayout.setOnRefreshListener {
             currposition=1
             callingSearchJobFn()
+        }
+
+        binding.filterOptionDisable.setOnClickListener {
+            binding.linearLayoutProgressBarDisable.visibility = View.VISIBLE
+            callingSearchJobFnAllNullAndMakeFiltersNull()
+
         }
         return binding.root
     }
@@ -158,6 +165,35 @@ class SearchJobFragment : Fragment() {
     }
 
     fun callingSearchJobFn() {
+        jobMVVM.searchAllJobs(
+            fragment = this@SearchJobFragment,
+            token = "Bearer $token",
+            context = requireContext(),
+            ts,
+            "${currposition-1}",
+            "10",
+            ps,
+            ls,
+            ss,
+            null,
+            es,
+            tts
+        )
+    }
+
+    fun callingSearchJobFnAllNullAndMakeFiltersNull() {
+        ps=null
+        ts=null
+        ls=null
+        ss=null
+        es=null
+        tts=null
+        preferredJobTypeArr.clear()
+        typeOfJobSet.clear()
+        locationSet.clear()
+        skillsSet.clear()
+        easyApplySet.clear()
+        timeSet.clear()
         jobMVVM.searchAllJobs(
             fragment = this@SearchJobFragment,
             token = "Bearer $token",
