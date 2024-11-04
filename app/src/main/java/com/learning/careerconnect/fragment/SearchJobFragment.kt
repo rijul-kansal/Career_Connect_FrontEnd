@@ -71,14 +71,23 @@ class SearchJobFragment : Fragment() {
         token = sharedPreference.getString(Constants.JWT_TOKEN_SP, "rk").toString()
 
         binding.filterOptionEnable.setOnClickListener {
-            binding.linearLayoutProgressBar.visibility= View.VISIBLE
-            jobMVVM.getAllTypeOfInfo(this,"Bearer ${token}",requireContext())
-        }
+            if(rolesAvailable.size <=0)
+            {
+                binding.linearLayoutProgressBar.visibility= View.VISIBLE
+                jobMVVM.getAllTypeOfInfo(this,"Bearer ${token}",requireContext())
+            }
+            else
+            {
+                showFilterDialog()
+            }
 
+        }
+        binding.constraintLayoutProgressBar.visibility = View.VISIBLE
         callingSearchJobFn()
         jobMVVM.observerForSearchAllJobs().observe(viewLifecycleOwner, Observer { result ->
             binding.refreshLayout.isRefreshing = false
-            binding.linearLayoutProgressBarDisable.visibility = View.INVISIBLE
+            binding.linearLayoutProgressBarDisable.visibility = View.GONE
+            binding.constraintLayoutProgressBar.visibility = View.GONE
             if (result.status == "success") {
                 if(diaglog!=null)
                 {
@@ -96,7 +105,7 @@ class SearchJobFragment : Fragment() {
         })
         jobMVVM.observerForgetAllTypeOfInfo().observe(viewLifecycleOwner, Observer { result ->
             if (result.status == "success") {
-                binding.linearLayoutProgressBar.visibility= View.INVISIBLE
+                binding.linearLayoutProgressBar.visibility= View.GONE
                 skillsAvailable = result.data!!.skill as ArrayList<String>
                 rolesAvailable = result.data!!.role as ArrayList<String>
                 locationAvailable = result.data!!.location as ArrayList<String>
@@ -147,11 +156,13 @@ class SearchJobFragment : Fragment() {
                 if(position == "forwardBtn")
                 {
                     currposition++
+                    binding.constraintLayoutProgressBar.visibility = View.VISIBLE
                     callingSearchJobFn()
                 }
                 else if(position == "backBtn")
                 {
                     currposition--
+                    binding.constraintLayoutProgressBar.visibility = View.VISIBLE
                     callingSearchJobFn()
                 }
                 else if(position != "...")
@@ -188,12 +199,16 @@ class SearchJobFragment : Fragment() {
         ss=null
         es=null
         tts=null
-        preferredJobTypeArr.clear()
+        preferredJobTypeSet.clear()
         typeOfJobSet.clear()
         locationSet.clear()
         skillsSet.clear()
         easyApplySet.clear()
         timeSet.clear()
+
+        rolesAvailable.clear()
+        skillsAvailable.clear()
+        locationAvailable.clear()
         jobMVVM.searchAllJobs(
             fragment = this@SearchJobFragment,
             token = "Bearer $token",
