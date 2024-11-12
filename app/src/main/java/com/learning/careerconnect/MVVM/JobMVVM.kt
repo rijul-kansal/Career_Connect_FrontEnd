@@ -6,7 +6,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.learning.careerconnect.Activity.DisplayJobInDetailActivity
+import com.learning.careerconnect.Model.ApplyJobIM
+import com.learning.careerconnect.Model.ApplyJobOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
+import com.learning.careerconnect.Model.SavedJobIM
+import com.learning.careerconnect.Model.SavedJobOM
 import com.learning.careerconnect.Model.SearchAllJobsOM
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.Utils.Retrofit
@@ -70,4 +75,59 @@ class JobMVVM : ViewModel() {
         }
     }
     fun observerForgetAllTypeOfInfo(): LiveData<GetAllTypeOfInformationOM> = resultOfgetAllTypeOfInfo
+
+    // apply for jobs
+    var resultOfApplyForJob: MutableLiveData<ApplyJobOM> = MutableLiveData()
+    fun applyForJob(activity:DisplayJobInDetailActivity,token:String,input:ApplyJobIM) {
+        try {
+            if (Constants.checkForInternet(activity)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.applyForJob(token,input)
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfApplyForJob.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            activity.errorFn(errorMessage ?: "Unknown error")
+                        }
+                    }
+                }
+            } else {
+                activity.errorFn("No internet connection")
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForApplyForJob(): LiveData<ApplyJobOM> = resultOfApplyForJob
+
+
+    // save  jobs for later
+    var resultOfSaveJobForLater: MutableLiveData<SavedJobOM> = MutableLiveData()
+    fun saveJobForLater(activity:DisplayJobInDetailActivity,token:String,input:SavedJobIM) {
+        try {
+            if (Constants.checkForInternet(activity)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.saveLaterJob(token,input)
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfSaveJobForLater.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            activity.errorFn(errorMessage ?: "Unknown error")
+                        }
+                    }
+                }
+            } else {
+                activity.errorFn("No internet connection")
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForSaveJobForLater(): LiveData<SavedJobOM> = resultOfSaveJobForLater
 }

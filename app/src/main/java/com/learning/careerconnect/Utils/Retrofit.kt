@@ -1,5 +1,7 @@
 package com.learning.careerconnect.Utils
 
+import com.learning.careerconnect.Model.ApplyJobIM
+import com.learning.careerconnect.Model.ApplyJobOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
@@ -9,6 +11,8 @@ import com.learning.careerconnect.Model.ResendOTPIM
 import com.learning.careerconnect.Model.ResendOTPOM
 import com.learning.careerconnect.Model.ResetPasswordIM
 import com.learning.careerconnect.Model.ResetPasswordOM
+import com.learning.careerconnect.Model.SavedJobIM
+import com.learning.careerconnect.Model.SavedJobOM
 import com.learning.careerconnect.Model.SearchAllJobsOM
 import com.learning.careerconnect.Model.SignUpIM
 import com.learning.careerconnect.Model.SignUpOM
@@ -58,4 +62,11 @@ interface Retrofit {
     @GET("/v1/jobs/getAllJobTypes")
     suspend fun getAllTypeOfInfo(
         @Header("authorization") authHeader:String) : Response<GetAllTypeOfInformationOM>
+    @POST("/v1/jobs/apply")
+    suspend fun applyForJob(
+        @Header("authorization") authHeader:String, @Body body : ApplyJobIM) : Response<ApplyJobOM>
+
+    @POST("/v1/jobs/saveLater")
+    suspend fun saveLaterJob(
+        @Header("authorization") authHeader:String, @Body body : SavedJobIM) : Response<SavedJobOM>
 }
