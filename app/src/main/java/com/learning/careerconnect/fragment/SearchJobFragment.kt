@@ -2,6 +2,7 @@ package com.learning.careerconnect.fragment
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.learning.careerconnect.Activity.BaseActivity
+import com.learning.careerconnect.Activity.DisplayJobInDetailActivity
 import com.learning.careerconnect.Adapter.FiltersAdapter
 import com.learning.careerconnect.Adapter.SearchJobAdapter
 import com.learning.careerconnect.MVVM.JobMVVM
@@ -138,6 +140,9 @@ class SearchJobFragment : Fragment() {
             SearchJobAdapter.OnClickListener {
             override fun onClick(position: Int, model: SearchAllJobsOM.Data.Data) {
                 model.nameOfCompany?.let { BaseActivity().toast(it,requireContext()) }
+                val intent = Intent(requireActivity(),DisplayJobInDetailActivity::class.java)
+                intent.putExtra(Constants.JOB_DATA,model)
+                startActivity(intent)
             }
         })
 

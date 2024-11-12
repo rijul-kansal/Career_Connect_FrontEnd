@@ -239,7 +239,7 @@ class SearchJobAdapter(
             binding.postedDate.text = item.postedDate?.let { "Posted date: ${convertLongToTime(it)}" }
 
             Glide.with(context)
-                .load(item.companyLinks?.getOrNull(2)?.name)
+                .load(item.companyLinks?.getOrNull(1)?.link)
                 .placeholder(R.drawable.career_connect_white_bg)
                 .into(binding.imageOfCompany)
 

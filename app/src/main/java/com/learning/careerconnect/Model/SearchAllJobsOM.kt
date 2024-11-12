@@ -1,14 +1,16 @@
 package com.learning.careerconnect.Model
 
+import java.io.Serializable
+
 data class SearchAllJobsOM(
     var `data`: Data? = null,
     var length: Int? = null, // 2
     var status: String? = null, // success
     var totalJobs: Int? = null // 2
-) {
+) : Serializable {
     data class Data(
         var `data`: List<Data?>? = null
-    ) {
+    ) : Serializable{
         data class Data(
             var __v: Int? = null, // 0
             var _id: String? = null, // 66f9a6f9d84e498104e472a0
@@ -32,12 +34,12 @@ data class SearchAllJobsOM(
             var startDate: String? = null, // December 2024
             var stopResponses: Boolean? = null, // false
             var typeOfJob: String? = null // PartTime
-        ) {
+        ) : Serializable{
             data class CompanyLink(
                 var _id: String? = null, // 66f9a6f9d84e498104e472a1
                 var link: String? = null, // https://www.ailabs.org
                 var name: String? = null // Company Website
-            )
+            ): Serializable
         }
     }
 }

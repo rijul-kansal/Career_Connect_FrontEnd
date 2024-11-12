@@ -23,6 +23,7 @@ object Constants {
     const val TIME_LEFT="time left"
     const val FCM_TOKEN="fcm token"
     const val TYPE_OF_USER="type of user"
+    const val JOB_DATA = "job data"
       // aws
 //    val baseUrl = "http://43.204.217.202:3200"
     // render

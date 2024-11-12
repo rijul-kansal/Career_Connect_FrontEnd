@@ -75,4 +75,9 @@
     <string name="apply_filter">Apply Filter</string>
     <string name="filter">Filter</string>
     <string name="reset_filters">Reset Filters</string>
+    <string name="responsibilities_qualification"><![CDATA[Responsibilities && Qualification]]></string>
+    <string name="name_of_company2">Name Of Company</string>
+    <string name="about_role">About Role</string>
+    <string name="skills_required">Skills Required</string>
+    <string name="perks">Perks</string>
 </resources>
