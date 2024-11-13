@@ -24,6 +24,8 @@ object Constants {
     const val FCM_TOKEN="fcm token"
     const val TYPE_OF_USER="type of user"
     const val JOB_DATA = "job data"
+    const val ONLY_JOBID_SP="only job id shared preference"
+    const val ONLY_JOBID_ARR="only job id array"
       // aws
 //    val baseUrl = "http://43.204.217.202:3200"
     // render

@@ -11,11 +11,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.gson.GsonBuilder
 import com.learning.careerconnect.Adapter.JobResponsibilitiesAdapter
 import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.Model.ApplyJobIM
 import com.learning.careerconnect.Model.SavedJobIM
 import com.learning.careerconnect.Model.SearchAllJobsOM
+import com.learning.careerconnect.Model.UnSavedJobIM
 import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.databinding.ActivityDisplayJobInDetailBinding
@@ -40,6 +42,11 @@ class DisplayJobInDetailActivity : BaseActivity() {
         }
         populateDate()
 
+        val sharedPreference1 =  getSharedPreferences(Constants.ONLY_JOBID_SP, Context.MODE_PRIVATE)
+        val gson = GsonBuilder().create()
+        val fileData= sharedPreference1.getString(Constants.ONLY_JOBID_ARR,"0")
+        val jobIdArr = gson.fromJson(fileData , Array<String>::class.java).toMutableList()
+
         binding.LL10.setOnClickListener {
             binding.applyBtnProgressBar.visibility = View.VISIBLE
             jobMVVM.applyForJob(this,"Bearer $token", ApplyJobIM(job._id))
@@ -55,12 +62,19 @@ class DisplayJobInDetailActivity : BaseActivity() {
         })
 
         binding.imageOfbookmark.setOnClickListener {
-            jobMVVM.saveJobForLater(this,"Bearer $token", SavedJobIM(job._id))
+
+            if(jobIdArr.contains(job._id))
+            {
+                jobMVVM.unSaveJob(this,"Bearer $token", UnSavedJobIM(job._id))
+            }
+            else
+            {
+                jobMVVM.saveJobForLater(this,"Bearer $token", SavedJobIM(job._id))
+            }
         }
 
         jobMVVM.observerForSaveJobForLater().observe(this, Observer {
                 result->
-            Log.d("rk",result.toString())
             if(result.status == "success")
             {
                 Glide.with(this)
@@ -68,11 +82,54 @@ class DisplayJobInDetailActivity : BaseActivity() {
                     .placeholder(R.drawable.career_connect_white_bg)
                     .into(binding.imageOfbookmark)
                 binding.aboutRole.text=job.descriptionAboutRole
+                job._id?.let { jobIdArr.add(it) }
+                var editor = sharedPreference1.edit()
+                editor.putString(Constants.ONLY_JOBID_ARR,jobIdArr.toString())
+                editor.commit()
             }
         })
+
+
+        jobMVVM.observerForUnSaveJob().observe(this, Observer {
+                result->
+            Log.d("rk",result.toString())
+            if(result.status == "success")
+            {
+                Glide.with(this)
+                    .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_open.png")
+                    .placeholder(R.drawable.career_connect_white_bg)
+                    .into(binding.imageOfbookmark)
+                binding.aboutRole.text=job.descriptionAboutRole
+                jobIdArr.remove(job._id)
+                var editor = sharedPreference1.edit()
+                editor.putString(Constants.ONLY_JOBID_ARR,jobIdArr.toString())
+                editor.commit()
+            }
+        })
+
+
+        if(jobIdArr.contains(job._id))
+        {
+            Glide.with(this)
+                .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_closed.png")
+                .placeholder(R.drawable.career_connect_white_bg)
+                .into(binding.imageOfbookmark)
+        }
+        else
+        {
+            Glide.with(this)
+                .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_open.png")
+                .placeholder(R.drawable.career_connect_white_bg)
+                .into(binding.imageOfbookmark)
+        }
+
+
+
     }
 
     private fun populateDate() {
+
+
         binding.nameOfCompany.text = job.nameOfCompany
         binding.location.text = job.location?.get(0) ?: "Not Disclosed"
         binding.typeOfJob.text = job.typeOfJob
@@ -83,10 +140,7 @@ class DisplayJobInDetailActivity : BaseActivity() {
             .placeholder(R.drawable.career_connect_white_bg)
             .into(binding.imageOfCompany)
 
-        Glide.with(this)
-            .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_open.png")
-            .placeholder(R.drawable.career_connect_white_bg)
-            .into(binding.imageOfbookmark)
+
         binding.aboutRole.text=job.descriptionAboutRole
 
 

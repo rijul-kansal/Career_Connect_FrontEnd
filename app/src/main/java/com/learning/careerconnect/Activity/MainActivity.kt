@@ -14,6 +14,7 @@ import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
+import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.MVVM.UserMVVM
 import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.R
@@ -31,30 +32,51 @@ import com.learning.careerconnect.fragment.SeeAllPostedJobFragment
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener  {
     lateinit var binding:ActivityMainBinding
     lateinit var userVM: UserMVVM
+    lateinit var jobVM: JobMVVM
     var doubleBackToExitPressedOnce = false
     lateinit var token:String
     lateinit var typeOfUser:String
+
+    lateinit var allSavedJobsJobId:ArrayList<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         binding= ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        allSavedJobsJobId = ArrayList()
         userVM = ViewModelProvider(this)[UserMVVM::class.java]
+        jobVM = ViewModelProvider(this)[JobMVVM::class.java]
         val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
         val sharedPreference1 = getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
         typeOfUser = sharedPreference1.getString(Constants.TYPE_OF_USER,"rk").toString()
         token = sharedPreference.getString(Constants.JWT_TOKEN_SP,"rk").toString()
         if(intent.hasExtra(Constants.FCM_TOKEN))
         {
-            Log.d("rk","fcm $token")
+//            Log.d("rk","fcm $token")
             val fcmToken =intent.getStringExtra(Constants.FCM_TOKEN).toString()
-            Log.d("rk","fcm $fcmToken")
+//            Log.d("rk","fcm $fcmToken")
             userVM.updateMe(UpdateMeIM(fcmToken = fcmToken), this, this, "Bearer ${token}")
         }
         userVM.observerForUpdateMe().observe(this , Observer {
-            Log.d("rk", it.toString())
+//            Log.d("rk", it.toString())
         })
 
+        jobVM.getAllSavedJobOnlyJobId(this,"Boarer $token")
 
+        jobVM.observerForGetAllSavedJobOnlyJobId().observe(this , Observer {
+            res->
+            Log.d("rk",res.toString())
+
+            for(i in 0..res.data!!.data!!.size-1)
+            {
+                allSavedJobsJobId.add((res.data!!.data?.get(i)!!.jobId).toString())
+            }
+
+            val sharedPreference =  getSharedPreferences(Constants.ONLY_JOBID_SP, Context.MODE_PRIVATE)
+            var editor = sharedPreference.edit()
+            editor.putString(Constants.ONLY_JOBID_ARR,allSavedJobsJobId.toString())
+            editor.commit()
+        })
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
 

@@ -7,12 +7,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.careerconnect.Activity.DisplayJobInDetailActivity
+import com.learning.careerconnect.Activity.MainActivity
+import com.learning.careerconnect.Model.AllSavedJobsJobIdOnlyOM
 import com.learning.careerconnect.Model.ApplyJobIM
 import com.learning.careerconnect.Model.ApplyJobOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
 import com.learning.careerconnect.Model.SavedJobIM
 import com.learning.careerconnect.Model.SavedJobOM
 import com.learning.careerconnect.Model.SearchAllJobsOM
+import com.learning.careerconnect.Model.UnSavedJobIM
+import com.learning.careerconnect.Model.UnSavedJobOM
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.Utils.Retrofit
 import com.learning.careerconnect.fragment.SearchJobFragment
@@ -130,4 +134,58 @@ class JobMVVM : ViewModel() {
         }
     }
     fun observerForSaveJobForLater(): LiveData<SavedJobOM> = resultOfSaveJobForLater
+
+    // get all saved  jobs only job id
+    var resultOfGetAllSavedJobOnlyJobId: MutableLiveData<AllSavedJobsJobIdOnlyOM> = MutableLiveData()
+    fun getAllSavedJobOnlyJobId(activity:MainActivity,token:String) {
+        try {
+            if (Constants.checkForInternet(activity)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.getAllSavedJobJobIdOnly(token)
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfGetAllSavedJobOnlyJobId.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            activity.errorFn(errorMessage ?: "Unknown error")
+                        }
+                    }
+                }
+            } else {
+                activity.errorFn("No internet connection")
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForGetAllSavedJobOnlyJobId(): LiveData<AllSavedJobsJobIdOnlyOM> = resultOfGetAllSavedJobOnlyJobId
+
+    // unsave job for later
+    var resultOfUnSaveJob: MutableLiveData<UnSavedJobOM> = MutableLiveData()
+    fun unSaveJob(activity:DisplayJobInDetailActivity,token:String, input:UnSavedJobIM) {
+        try {
+            if (Constants.checkForInternet(activity)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.unSaveJob(token,input)
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfUnSaveJob.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            activity.errorFn(errorMessage ?: "Unknown error")
+                        }
+                    }
+                }
+            } else {
+                activity.errorFn("No internet connection")
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForUnSaveJob(): LiveData<UnSavedJobOM> = resultOfUnSaveJob
 }
