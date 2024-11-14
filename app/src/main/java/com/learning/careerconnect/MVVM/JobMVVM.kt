@@ -11,6 +11,7 @@ import com.learning.careerconnect.Activity.MainActivity
 import com.learning.careerconnect.Model.AllSavedJobsJobIdOnlyOM
 import com.learning.careerconnect.Model.ApplyJobIM
 import com.learning.careerconnect.Model.ApplyJobOM
+import com.learning.careerconnect.Model.GetAllAppliedJobsOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
 import com.learning.careerconnect.Model.SavedJobIM
 import com.learning.careerconnect.Model.SavedJobOM
@@ -19,6 +20,7 @@ import com.learning.careerconnect.Model.UnSavedJobIM
 import com.learning.careerconnect.Model.UnSavedJobOM
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.Utils.Retrofit
+import com.learning.careerconnect.fragment.AppliedJobFragment
 import com.learning.careerconnect.fragment.SearchJobFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -188,4 +190,32 @@ class JobMVVM : ViewModel() {
         }
     }
     fun observerForUnSaveJob(): LiveData<UnSavedJobOM> = resultOfUnSaveJob
+
+
+    // unsave job for later
+    var resultOfGetAllAppliedJobs: MutableLiveData<GetAllAppliedJobsOM> = MutableLiveData()
+    fun getAllAppliedJobs(context: Context,token:String , fragment:AppliedJobFragment,skip:String) {
+        try {
+            if (Constants.checkForInternet(context)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.getAllAppliedJobs(token,skip,"10")
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfGetAllAppliedJobs.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            fragment.errorFn(errorMessage ?: "Unknown error")
+                        }
+                    }
+                }
+            } else {
+                fragment.errorFn("No internet connection")
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForGetAllAppliedJobs(): LiveData<GetAllAppliedJobsOM> = resultOfGetAllAppliedJobs
 }
