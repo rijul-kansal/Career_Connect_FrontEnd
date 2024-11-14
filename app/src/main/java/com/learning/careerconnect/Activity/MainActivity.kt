@@ -14,6 +14,7 @@ import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
+import com.learning.careerconnect.Cashes.JobAppliedDB
 import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.MVVM.UserMVVM
 import com.learning.careerconnect.Model.UpdateMeIM
@@ -37,6 +38,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     lateinit var token:String
     lateinit var typeOfUser:String
 
+
     lateinit var allSavedJobsJobId:ArrayList<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         binding= ActivityMainBinding.inflate(layoutInflater)
@@ -52,36 +54,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         token = sharedPreference.getString(Constants.JWT_TOKEN_SP,"rk").toString()
         if(intent.hasExtra(Constants.FCM_TOKEN))
         {
-//            Log.d("rk","fcm $token")
             val fcmToken =intent.getStringExtra(Constants.FCM_TOKEN).toString()
-//            Log.d("rk","fcm $fcmToken")
             userVM.updateMe(UpdateMeIM(fcmToken = fcmToken), this, this, "Bearer ${token}")
         }
-        userVM.observerForUpdateMe().observe(this , Observer {
-//            Log.d("rk", it.toString())
-        })
-
-        jobVM.getAllSavedJobOnlyJobId(this,"Boarer $token")
-
-        jobVM.observerForGetAllSavedJobOnlyJobId().observe(this , Observer {
-            res->
-            Log.d("rk",res.toString())
-
-            for(i in 0..res.data!!.data!!.size-1)
-            {
-                allSavedJobsJobId.add((res.data!!.data?.get(i)!!.jobId).toString())
-            }
-
-            val sharedPreference =  getSharedPreferences(Constants.ONLY_JOBID_SP, Context.MODE_PRIVATE)
-            var editor = sharedPreference.edit()
-            editor.putString(Constants.ONLY_JOBID_ARR,allSavedJobsJobId.toString())
-            editor.commit()
-        })
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
-
-
         binding.navView.setNavigationItemSelectedListener(this)
+
         if(typeOfUser == "User")
         {
             binding.navView.inflateMenu(R.menu.user_menu)
@@ -101,6 +80,67 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 .replace(R.id.fragment_container, SearchJobFragment()).commit()
             binding.navView.setCheckedItem(R.id.searchJob)
         }
+        jobVM.getAllSavedJobOnlyJobId(this,"Boarer $token")
+        jobVM.getAllAppliedJobs(this,"Bearer $token",AppliedJobFragment(),"0")
+
+        jobVM.observerForGetAllSavedJobOnlyJobId().observe(this , Observer {
+            res->
+            Log.d("rk" ,"SAVED JOB ONLY JOBS")
+
+            for(i in 0..res.data!!.data!!.size-1)
+            {
+                allSavedJobsJobId.add((res.data!!.data?.get(i)!!.jobId).toString())
+            }
+
+            val sharedPreference =  getSharedPreferences(Constants.ONLY_JOBID_SP, Context.MODE_PRIVATE)
+            var editor = sharedPreference.edit()
+            editor.putString(Constants.ONLY_JOBID_ARR,allSavedJobsJobId.toString())
+            editor.commit()
+        })
+        jobVM.observerForGetAllAppliedJobs().observe(this, Observer { result ->
+            Log.d("rk" ,"Applied Job API")
+            if (result.status == "success") {
+                val dbHandler = JobAppliedDB(this)
+                dbHandler.deleteAll()
+                for (item in result.data.data) {
+                    val jobApplied = item.jobAppliedId
+                    val companyLinks = jobApplied?.companyLinks?.joinToString(" || ") { it?.link ?: "" }
+                    val locations = jobApplied?.location?.joinToString(" || ") ?: ""
+                    val minimumQualifications = jobApplied?.minimumQualification?.joinToString(" || ") ?: ""
+                    val perks = jobApplied?.perks?.joinToString(" || ") ?: ""
+                    val responsibilities = jobApplied?.responsibilities?.joinToString(" || ") ?: ""
+                    val skillsRequired = jobApplied?.skillsRequired?.joinToString(" || ") ?: ""
+
+                    // Add data to the database
+                    dbHandler.add(
+                        _id = jobApplied?._id,
+                        nameOfCompany = jobApplied?.nameOfCompany,
+                        aboutCompany = jobApplied?.aboutCompany,
+                        nameOfRole = jobApplied?.nameOfRole,
+                        typeOfJob = jobApplied?.typeOfJob,
+                        location = locations,
+                        startDate = jobApplied?.startDate,
+                        durationOfInternship = jobApplied?.durationOfInternship,
+                        ctc = jobApplied?.costToCompany,
+                        lastDateToApply = jobApplied?.lastDateToApply?.toString(),
+                        descriptionAboutRole = jobApplied?.descriptionAboutRole,
+                        skillsRequired = skillsRequired,
+                        noOfOpenings = jobApplied?.noOfOpening?.toString(),
+                        perks = perks,
+                        noOfStudentsApplied = jobApplied?.noOfStudentsApplied?.toString(),
+                        responsibilities = responsibilities,
+                        roleCategory = jobApplied?.roleCategory,
+                        minimumQualification = minimumQualifications,
+                        companyLinks = companyLinks,
+                        postedDate = jobApplied?.postedDate?.toString(),
+                        type = item.type
+                    )
+                }
+            }
+        })
+        userVM.observerForUpdateMe().observe(this, Observer {
+            Log.d("rk","Update User API")
+        })
     }
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

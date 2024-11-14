@@ -72,7 +72,7 @@ class SignInActivity : BaseActivity() {
             }
         }
         authVM.observerForLoginUser().observe(this, Observer{
-
+            Log.d("rk","Login api")
             if(it.status == "success")
             {
                 val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
@@ -95,6 +95,7 @@ class SignInActivity : BaseActivity() {
             }
         })
         authVM.observerForVerifyOTPUser().observe(this, Observer{
+            Log.d("rk","Verify OTP api")
             toast(it.message!!,this@SignInActivity)
 
             if(it.message == "Successfully verified user")
@@ -121,6 +122,7 @@ class SignInActivity : BaseActivity() {
         })
 
         authVM.observerForResendOTP().observe(this, Observer{
+            Log.d("rk","Resend otp api")
             toast(it.message!!,this@SignInActivity)
 
             if(it.message == "successfully send OTP , Please check your email id")
@@ -145,6 +147,7 @@ class SignInActivity : BaseActivity() {
         }
 
         authVM.observerForResetPassword().observe(this, Observer{
+            Log.d("rk","reset APi  api")
             if(it.message == "Please check your email or otp")
             {
                 it.message = "Please check your OTP"

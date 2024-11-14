@@ -79,6 +79,7 @@ class SignUpActivity : BaseActivity() {
         }
 
         authVM.observerForSignUpUser().observe(this, Observer{
+            Log.d("rk","Sign Up  api")
             toast("Successfully register!!!",this@SignUpActivity)
             binding.progressBar.visibility= View.INVISIBLE
             binding.signUpBtn.visibility= View.VISIBLE
@@ -86,6 +87,7 @@ class SignUpActivity : BaseActivity() {
         })
 
         authVM.observerForVerifyOTPUser().observe(this, Observer{
+            Log.d("rk","verify otp api")
             toast(it.message!!,this@SignUpActivity)
 
             if(it.message == "Successfully verified user")
@@ -107,6 +109,7 @@ class SignUpActivity : BaseActivity() {
 
         })
         authVM.observerForResendOTP().observe(this, Observer{
+            Log.d("rk","resend otp  api")
             toast(it.message!!,this@SignUpActivity)
         })
     }

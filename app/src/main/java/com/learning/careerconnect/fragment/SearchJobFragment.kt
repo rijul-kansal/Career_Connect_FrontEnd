@@ -87,6 +87,7 @@ class SearchJobFragment : Fragment() {
         binding.constraintLayoutProgressBar.visibility = View.VISIBLE
         callingSearchJobFn()
         jobMVVM.observerForSearchAllJobs().observe(viewLifecycleOwner, Observer { result ->
+            Log.d("rk","search jobs api")
             binding.refreshLayout.isRefreshing = false
             binding.linearLayoutProgressBarDisable.visibility = View.GONE
             binding.constraintLayoutProgressBar.visibility = View.GONE
@@ -97,7 +98,6 @@ class SearchJobFragment : Fragment() {
                     diaglog=null
                 }
                 totalItemCount= result.totalJobs!!.toInt()
-                Log.d("rk",totalItemCount.toString())
                 arrayListJobsMain.clear()
                 for (i in 0..result.data!!.data!!.size - 1) {
                     result.data!!.data?.get(i)?.let { arrayListJobsMain.add(it) }
@@ -106,6 +106,7 @@ class SearchJobFragment : Fragment() {
             }
         })
         jobMVVM.observerForgetAllTypeOfInfo().observe(viewLifecycleOwner, Observer { result ->
+            Log.d("rk","Get all type of info  api")
             if (result.status == "success") {
                 binding.linearLayoutProgressBar.visibility= View.GONE
                 skillsAvailable = result.data!!.skill as ArrayList<String>

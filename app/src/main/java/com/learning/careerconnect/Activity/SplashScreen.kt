@@ -53,7 +53,7 @@ class SplashScreen : AppCompatActivity() {
             finish()
         }
         authVM.observerForRefreshToken().observe(this, Observer {
-//            Log.d("rk",it.toString())
+            Log.d("rk","Refresh token  api ")
             if(it.status=="success")
             {
                 var editor = sharedPreference.edit()
