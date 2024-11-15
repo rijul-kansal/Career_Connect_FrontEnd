@@ -17,6 +17,7 @@ import com.learning.careerconnect.Cashes.JobAppliedDB
 import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.Model.AppliedJobsModelSQLite
 import com.learning.careerconnect.Model.ApplyJobIM
+import com.learning.careerconnect.Model.GetAllAppliedJobsOM
 import com.learning.careerconnect.Model.SavedJobIM
 import com.learning.careerconnect.Model.SearchAllJobsOM
 import com.learning.careerconnect.Model.UnSavedJobIM
@@ -30,6 +31,7 @@ class DisplayJobInDetailActivity : BaseActivity() {
     lateinit var job : SearchAllJobsOM.Data.Data
     lateinit var jobMVVM:JobMVVM
     lateinit var token :String
+    var typeOfFragment:String=""
     override fun onCreate(savedInstanceState: Bundle?) {
         binding= ActivityDisplayJobInDetailBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -38,34 +40,62 @@ class DisplayJobInDetailActivity : BaseActivity() {
 
         val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
         token = sharedPreference.getString(Constants.JWT_TOKEN_SP,"rk").toString()
-        if(intent.hasExtra(Constants.JOB_DATA))
+
+
+        if(intent.hasExtra(Constants.TYPE_OF_FRAGMENT))
+        {
+            typeOfFragment = intent.getStringExtra(Constants.TYPE_OF_FRAGMENT).toString()
+
+        }
+        if(typeOfFragment !="AppliedJobFragment" && intent.hasExtra(Constants.JOB_DATA))
         {
             job = intent.getSerializableExtra(Constants.JOB_DATA) as SearchAllJobsOM.Data.Data
         }
-        populateDate()
 
+
+        if(typeOfFragment  == "AppliedJobFragment")
+        {
+            binding.LL10Btn.text = "Applied"
+            binding.imageOfbookmark.visibility = View.GONE
+            var model  = intent.getSerializableExtra(Constants.JOB_DATA1) as GetAllAppliedJobsOM.Data.Data
+            var companyLink :ArrayList<SearchAllJobsOM.Data.Data.CompanyLink> = ArrayList()
+
+            companyLink.add(SearchAllJobsOM.Data.Data.CompanyLink(model.jobAppliedId!!.companyLinks?.get(0)?._id,model.jobAppliedId!!.companyLinks?.get(0)?.link,model.jobAppliedId!!.companyLinks?.get(0)?.name))
+            companyLink.add(SearchAllJobsOM.Data.Data.CompanyLink(model.jobAppliedId!!.companyLinks?.get(1)?._id,model.jobAppliedId!!.companyLinks?.get(1)?.link,model.jobAppliedId!!.companyLinks?.get(1)?.name))
+
+            Log.d("rk",companyLink.toString())
+            job = SearchAllJobsOM.Data.Data(model.jobAppliedId!!.__v,model.jobAppliedId!!._id,model.jobAppliedId!!.aboutCompany,companyLink,
+                model.jobAppliedId!!.costToCompany,model.jobAppliedId!!.descriptionAboutRole,model.jobAppliedId!!.durationOfInternship,model.jobAppliedId!!.lastDateToApply,model.jobAppliedId!!.location,
+                        model.jobAppliedId!!.minimumQualification,model.jobAppliedId!!.nameOfCompany,model.jobAppliedId!!.nameOfRole,model.jobAppliedId!!.noOfOpening,
+                model.jobAppliedId!!.noOfStudentsApplied,model.jobAppliedId!!.perks,model.jobAppliedId!!.postedDate,model.jobAppliedId!!.responsibilities,
+                model.jobAppliedId!!.roleCategory,model.jobAppliedId!!.skillsRequired,model.jobAppliedId!!.startDate,model.jobAppliedId!!.stopResponses,model.jobAppliedId!!.typeOfJob)
+
+        }
+        populateDate()
         val sharedPreference1 =  getSharedPreferences(Constants.ONLY_JOBID_SP, Context.MODE_PRIVATE)
         val gson = GsonBuilder().create()
         val fileData= sharedPreference1.getString(Constants.ONLY_JOBID_ARR,"0")
         val jobIdArr = gson.fromJson(fileData , Array<String>::class.java).toMutableList()
 
         binding.LL10.setOnClickListener {
+            if(typeOfFragment != "AppliedJobFragment")
+            {
+                binding.applyBtnProgressBar.visibility = View.VISIBLE
+                jobMVVM.applyForJob(this,"Bearer $token", ApplyJobIM(job._id))
+            }
 
-            binding.applyBtnProgressBar.visibility = View.VISIBLE
-            jobMVVM.applyForJob(this,"Bearer $token", ApplyJobIM(job._id))
         }
 
         jobMVVM.observerForApplyForJob().observe(this, Observer {
             result->
             Log.d("rk","apply for job")
-
-
             binding.applyBtnProgressBar.visibility = View.GONE
             if(result.status == "success")
             {
                 val dbHandler = JobAppliedDB(this)
                 val data= dbHandler.read()
-                data.removeAt(data.size-1)
+                if(data.size >=10)
+                    data.removeAt(data.size-1)
                 val model = getModel()
                 data.add(0,model)
                 dbHandler.deleteAll()
@@ -102,9 +132,7 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 finish()
             }
         })
-
         binding.imageOfbookmark.setOnClickListener {
-
             if(jobIdArr.contains(job._id))
             {
                 jobMVVM.unSaveJob(this,"Bearer $token", UnSavedJobIM(job._id))
@@ -114,7 +142,6 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 jobMVVM.saveJobForLater(this,"Bearer $token", SavedJobIM(job._id))
             }
         }
-
         jobMVVM.observerForSaveJobForLater().observe(this, Observer {
                 result->
             Log.d("rk","save job for later api")
@@ -131,8 +158,6 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 editor.commit()
             }
         })
-
-
         jobMVVM.observerForUnSaveJob().observe(this, Observer {
                 result->
             Log.d("rk","un save job for later api")
@@ -150,8 +175,6 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 editor.commit()
             }
         })
-
-
         if(jobIdArr.contains(job._id))
         {
             Glide.with(this)

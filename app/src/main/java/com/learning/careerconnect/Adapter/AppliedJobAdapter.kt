@@ -1,6 +1,7 @@
 package com.learning.careerconnect.Adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -96,8 +97,9 @@ class AppliedJobAdapter(
             binding.nameOfRole.text = item!!.jobAppliedId!!.nameOfRole
             binding.nameOfCompany.text = item!!.jobAppliedId!!.nameOfCompany
             binding.status.text = "Status: "+item.type
+            Log.d("rk","link ${item.jobAppliedId!!.companyLinks?.get(1)!!.link}\n")
             Glide.with(context)
-                .load(item.jobAppliedId!!.companyLinks?.getOrNull(1)?.link)
+                .load(item.jobAppliedId!!.companyLinks?.get(1)!!.link)
                 .placeholder(R.drawable.career_connect_white_bg)
                 .into(binding.imageOfCompany)
 

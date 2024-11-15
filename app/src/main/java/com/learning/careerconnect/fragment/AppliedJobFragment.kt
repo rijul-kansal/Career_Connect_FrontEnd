@@ -1,6 +1,7 @@
 package com.learning.careerconnect.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.learning.careerconnect.Activity.BaseActivity
+import com.learning.careerconnect.Activity.DisplayJobInDetailActivity
 import com.learning.careerconnect.Adapter.AppliedJobAdapter
 import com.learning.careerconnect.Cashes.JobAppliedDB
 import com.learning.careerconnect.MVVM.JobMVVM
@@ -32,6 +34,9 @@ class AppliedJobFragment : Fragment() {
 
     var skip=0
 
+    var isFirst = true
+    var isDataAvalable = true
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +54,7 @@ class AppliedJobFragment : Fragment() {
             Log.d("rk","Get all applied jobs api")
             if(res.status == "success")
             {
+                if(res.data.data.size <=0) isDataAvalable = false
                 if(isLoading)
                 {
                     appliedJobsData.removeAt(appliedJobsData.size-1)
@@ -90,7 +96,6 @@ class AppliedJobFragment : Fragment() {
         appliedJobsData = ArrayList()
         val dbHandler = JobAppliedDB(requireActivity())
         val data= dbHandler.read()
-        Log.d("rk","Data $data")
         for( i in 0..data.size-1)
         {
             val _id = data[i]._id
@@ -146,7 +151,6 @@ class AppliedJobFragment : Fragment() {
                 typeOfJob = typeOfJob
             ),null,type,null))
         }
-
         adapter(appliedJobsData)
 
     }
@@ -159,16 +163,31 @@ class AppliedJobFragment : Fragment() {
         itemAdapter.setOnClickListener(object :
             AppliedJobAdapter.OnClickListener {
             override fun onClick(position: Int, model: GetAllAppliedJobsOM.Data.Data) {
+                    var intent= Intent(requireActivity(),DisplayJobInDetailActivity::class.java)
+                    intent.putExtra(Constants.JOB_DATA1,model)
+                    intent.putExtra(Constants.TYPE_OF_FRAGMENT,"AppliedJobFragment")
+                    startActivity(intent)
 
             }
         })
     }
 
     private fun getMoreData() {
-        appliedJobsData.add(null)
-        itemAdapter.notifyItemChanged(appliedJobsData.size -1)
-        skip+=10
-        jobMVVM.getAllAppliedJobs(requireContext(),"Bearer $token",this,"$skip")
+        if(isFirst)
+        {
+            skip+=appliedJobsData.size
+            isFirst=false
+        }
+        else
+            skip+=10
+
+        if(isDataAvalable)
+        {
+            appliedJobsData.add(null)
+            itemAdapter.notifyItemChanged(appliedJobsData.size -1)
+            jobMVVM.getAllAppliedJobs(requireContext(),"Bearer $token",this,"$skip")
+
+        }
     }
     fun errorFn(message: String) {
         BaseActivity().toast(message, requireContext())

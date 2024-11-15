@@ -382,6 +382,7 @@
             android:background="@drawable/main_colour_border_bg_btn_inside_white"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/LL10Btn"
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="18dp"
                 android:gravity="center"

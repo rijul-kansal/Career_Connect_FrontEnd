@@ -104,12 +104,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 dbHandler.deleteAll()
                 for (item in result.data.data) {
                     val jobApplied = item.jobAppliedId
-                    val companyLinks = jobApplied?.companyLinks?.joinToString(" || ") { it?.link ?: "" }
-                    val locations = jobApplied?.location?.joinToString(" || ") ?: ""
-                    val minimumQualifications = jobApplied?.minimumQualification?.joinToString(" || ") ?: ""
-                    val perks = jobApplied?.perks?.joinToString(" || ") ?: ""
-                    val responsibilities = jobApplied?.responsibilities?.joinToString(" || ") ?: ""
-                    val skillsRequired = jobApplied?.skillsRequired?.joinToString(" || ") ?: ""
+                    val companyLinks = jobApplied?.companyLinks?.joinToString("||") { it?.link ?: "" }
+                    val locations = jobApplied?.location?.joinToString("||") ?: ""
+                    val minimumQualifications = jobApplied?.minimumQualification?.joinToString("||") ?: ""
+                    val perks = jobApplied?.perks?.joinToString("||") ?: ""
+                    val responsibilities = jobApplied?.responsibilities?.joinToString("||") ?: ""
+                    val skillsRequired = jobApplied?.skillsRequired?.joinToString("||") ?: ""
 
                     // Add data to the database
                     dbHandler.add(

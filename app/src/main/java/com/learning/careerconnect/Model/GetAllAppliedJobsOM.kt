@@ -1,13 +1,15 @@
 package com.learning.careerconnect.Model
 
+import java.io.Serializable
+
 data class GetAllAppliedJobsOM(
     var `data`: Data,
     var length: Int ,
     var status: String
-) {
+) : Serializable {
     data class Data(
         var `data`: List<Data>
-    ) {
+    ) : Serializable{
         data class Data(
             var __v: Int? = null, // 0
             var _id: String? = null, // 67348301407a80d855962abe
@@ -15,7 +17,7 @@ data class GetAllAppliedJobsOM(
             var postedDate: Long? = null, // 1731494657801
             var type: String? = null, // Applied
             var userId: String? = null // 66f9a6c5d84e498104e47290
-        ) {
+        ) : Serializable{
             data class JobAppliedId(
                 var __v: Int? = null, // 2
                 var _id: String? = null, // 672122972f91c619ab06392c
@@ -39,12 +41,12 @@ data class GetAllAppliedJobsOM(
                 var startDate: String? = null, // Immediate
                 var stopResponses: Boolean? = null, // false
                 var typeOfJob: String? = null // Internship
-            ) {
+            ) : Serializable{
                 data class CompanyLink(
                     var _id: String? = null, // 672122972f91c619ab06392d
                     var link: String? = null, // https://www.linkedin.com/company/decentralizex
                     var name: String? = null // Company's link
-                )
+                ): Serializable
             }
         }
     }
