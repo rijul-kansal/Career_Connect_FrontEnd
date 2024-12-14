@@ -4,6 +4,7 @@ import com.learning.careerconnect.Model.AllSavedJobsJobIdOnlyOM
 import com.learning.careerconnect.Model.ApplyJobIM
 import com.learning.careerconnect.Model.ApplyJobOM
 import com.learning.careerconnect.Model.GetAllAppliedJobsOM
+import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
@@ -80,5 +81,11 @@ interface Retrofit {
         @Header("authorization") authHeader:String,
         @Query("skip") skip: String? = null,
         @Query("limit") limit: String? = null) : Response<GetAllAppliedJobsOM>
+
+    @GET("/v1/jobs/getAllSavedLaterJobs")
+    suspend fun getAllSavedLaterJobs(
+        @Header("authorization") authHeader:String,
+        @Query("skip") skip: String? = null,
+        @Query("limit") limit: String? = null) : Response<GetAllSavedLaterJobsOM>
 
 }

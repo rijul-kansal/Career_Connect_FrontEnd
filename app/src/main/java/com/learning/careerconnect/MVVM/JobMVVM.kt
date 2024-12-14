@@ -12,6 +12,7 @@ import com.learning.careerconnect.Model.AllSavedJobsJobIdOnlyOM
 import com.learning.careerconnect.Model.ApplyJobIM
 import com.learning.careerconnect.Model.ApplyJobOM
 import com.learning.careerconnect.Model.GetAllAppliedJobsOM
+import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
 import com.learning.careerconnect.Model.SavedJobIM
 import com.learning.careerconnect.Model.SavedJobOM
@@ -21,6 +22,7 @@ import com.learning.careerconnect.Model.UnSavedJobOM
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.Utils.Retrofit
 import com.learning.careerconnect.fragment.AppliedJobFragment
+import com.learning.careerconnect.fragment.SavedJobFragment
 import com.learning.careerconnect.fragment.SearchJobFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -218,4 +220,34 @@ class JobMVVM : ViewModel() {
         }
     }
     fun observerForGetAllAppliedJobs(): LiveData<GetAllAppliedJobsOM> = resultOfGetAllAppliedJobs
+
+
+    // get all saved later jobs full data
+    var resultOfGetAllSavedLaterJobsFull: MutableLiveData<GetAllSavedLaterJobsOM> = MutableLiveData()
+    fun getAllSavedLaterJobsFull(activity: MainActivity,token:String ,fragment:SavedJobFragment,skip:String) {
+        try {
+            if (Constants.checkForInternet(activity)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.getAllSavedLaterJobs(token,skip,"10")
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfGetAllSavedLaterJobsFull.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            fragment.errorFn(errorMessage ?: "Unknown error")
+                            activity.errorFn(errorMessage ?: "Unknown error")
+                        }
+                    }
+                }
+            } else {
+                fragment.errorFn("No internet connection")
+                activity.errorFn("No internet connection")
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForGetAllSavedLaterJobsFull(): LiveData<GetAllSavedLaterJobsOM> = resultOfGetAllSavedLaterJobsFull
 }

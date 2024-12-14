@@ -26,7 +26,9 @@ object Constants {
     const val JOB_DATA = "job data"
     const val JOB_DATA1 = "job data for appliedJob Fragment"
     const val ONLY_JOBID_SP="only job id shared preference"
+    const val FULL_JOBID_SP="full saved  job data shared preference"
     const val ONLY_JOBID_ARR="only job id array"
+    const val FULL_JOBID_ARR="full job details array"
     const val TYPE_OF_FRAGMENT= "from which fragment we moved"
     val baseUrl = "https://career-connect-drxp.onrender.com"
 

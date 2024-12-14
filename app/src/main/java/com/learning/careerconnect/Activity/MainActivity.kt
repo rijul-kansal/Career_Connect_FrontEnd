@@ -14,9 +14,11 @@ import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
+import com.google.gson.Gson
 import com.learning.careerconnect.Cashes.JobAppliedDB
 import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.MVVM.UserMVVM
+import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
 import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
@@ -82,7 +84,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         jobVM.getAllSavedJobOnlyJobId(this,"Boarer $token")
         jobVM.getAllAppliedJobs(this,"Bearer $token",AppliedJobFragment(),"0")
-
+        jobVM.getAllSavedLaterJobsFull(this,"Bearer $token", SavedJobFragment(),"0")
         jobVM.observerForGetAllSavedJobOnlyJobId().observe(this , Observer {
             res->
             Log.d("rk" ,"SAVED JOB ONLY JOBS")
@@ -140,6 +142,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         })
         userVM.observerForUpdateMe().observe(this, Observer {
             Log.d("rk","Update User API")
+        })
+        jobVM.observerForGetAllSavedLaterJobsFull().observe(this , Observer {
+                res->
+            Log.d("rk" ,"SAVED Later JOBS fully")
+            val gson = Gson()
+            val jsonString = gson.toJson(res)
+            val sharedPreference = getSharedPreferences(Constants.FULL_JOBID_SP, Context.MODE_PRIVATE)
+            val editor = sharedPreference.edit()
+            editor.putString(Constants.FULL_JOBID_ARR, jsonString)
+            editor.commit()
         })
     }
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
