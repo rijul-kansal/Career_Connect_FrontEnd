@@ -11,6 +11,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.learning.careerconnect.Adapter.JobResponsibilitiesAdapter
 import com.learning.careerconnect.Cashes.JobAppliedDB
@@ -18,6 +20,7 @@ import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.Model.AppliedJobsModelSQLite
 import com.learning.careerconnect.Model.ApplyJobIM
 import com.learning.careerconnect.Model.GetAllAppliedJobsOM
+import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
 import com.learning.careerconnect.Model.SavedJobIM
 import com.learning.careerconnect.Model.SearchAllJobsOM
 import com.learning.careerconnect.Model.UnSavedJobIM
@@ -155,7 +158,24 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 job._id?.let { jobIdArr.add(it) }
                 var editor = sharedPreference1.edit()
                 editor.putString(Constants.ONLY_JOBID_ARR,jobIdArr.toString())
-                editor.commit()
+                editor.apply()
+
+                val sharedPreferenceToGetData = getSharedPreferences(Constants.FULL_JOBID_SP, Context.MODE_PRIVATE)
+                val fileData = sharedPreferenceToGetData.getString(Constants.FULL_JOBID_ARR, null)
+                val listType = object : TypeToken<ArrayList<GetAllSavedLaterJobsOM.Data.Data.JobId>>() {}.type
+                val jobsArr = gson.fromJson<ArrayList<GetAllSavedLaterJobsOM.Data.Data.JobId>>(fileData, listType)
+
+                val jobSaveSharedPreference = getSharedPreferences(Constants.FULL_JOBID_SP, Context.MODE_PRIVATE)
+                val e=jobSaveSharedPreference.edit()
+                if(jobsArr.size>=10)
+                {
+                    jobsArr.removeAt(0)
+                }
+                val castJob = castSearchJobToAppliedJob(job)
+                jobsArr.add(castJob)
+                val jsonString = gson.toJson(jobsArr)
+                e.putString(Constants.FULL_JOBID_ARR,jsonString)
+                e.apply()
             }
         })
         jobMVVM.observerForUnSaveJob().observe(this, Observer {
@@ -189,6 +209,43 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 .placeholder(R.drawable.career_connect_white_bg)
                 .into(binding.imageOfbookmark)
         }
+    }
+
+    private fun castSearchJobToAppliedJob(job:SearchAllJobsOM.Data.Data): GetAllSavedLaterJobsOM.Data.Data.JobId {
+        val newJob  = GetAllSavedLaterJobsOM.Data.Data.JobId()
+        val newjobCompanyLink = ArrayList<GetAllSavedLaterJobsOM.Data.Data.JobId.CompanyLink>()
+
+        for(i in job.companyLinks!!)
+        {
+            if (i != null) {
+                i._id?.let { GetAllSavedLaterJobsOM.Data.Data.JobId.CompanyLink(it, i.link, i.name) }
+                    ?.let { newjobCompanyLink.add(it) }
+            }
+        }
+        newJob.__v = job.__v
+        newJob._id = job._id
+        newJob.aboutCompany = job.aboutCompany
+        newJob.companyLinks = newjobCompanyLink
+        newJob.costToCompany = job.costToCompany
+        newJob.descriptionAboutRole = job.descriptionAboutRole
+        newJob.durationOfInternship = job.durationOfInternship
+        newJob.lastDateToApply = job.lastDateToApply
+        newJob.location = job.location
+        newJob.minimumQualification = job.minimumQualification
+        newJob.nameOfCompany = job.nameOfCompany
+        newJob.nameOfRole = job.nameOfRole
+        newJob.noOfOpening = job.noOfOpening
+        newJob.noOfStudentsApplied = job.noOfStudentsApplied
+        newJob.perks = job.perks
+        newJob.postedDate = job.postedDate
+        newJob.responsibilities = job.responsibilities
+        newJob.roleCategory = job.roleCategory
+        newJob.skillsRequired = job.skillsRequired
+        newJob.startDate = job.startDate
+        newJob.stopResponses = job.stopResponses
+        newJob.typeOfJob = job.typeOfJob
+
+        return newJob
     }
 
     private fun populateDate() {

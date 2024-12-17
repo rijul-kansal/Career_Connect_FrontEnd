@@ -1,19 +1,21 @@
 package com.learning.careerconnect.Model
 
+import java.io.Serializable
+
 data class GetAllSavedLaterJobsOM(
     var `data`: Data? = null,
     var length: Int? = null, // 3
     var status: String? = null // success
-) {
+) : Serializable {
     data class Data(
         var `data`: List<Data?>? = null
-    ) {
+    ) : Serializable{
         data class Data(
             var __v: Int? = null, // 0
             var _id: String? = null, // 6737279f5105531d156a48f2
             var jobId: JobId? = null,
             var userId: String? = null // 671fd32c424d84937f6f89b6
-        ) {
+        ) : Serializable{
             data class JobId(
                 var __v: Int? = null, // 3
                 var _id: String? = null, // 672122842f91c619ab063921
@@ -37,12 +39,12 @@ data class GetAllSavedLaterJobsOM(
                 var startDate: String? = null, // Jan 2025
                 var stopResponses: Boolean? = null, // false
                 var typeOfJob: String? = null // FullTime
-            ) {
+            ): Serializable {
                 data class CompanyLink(
                     var _id: String? = null, // 672122842f91c619ab063922
                     var link: String? = null, // https://www.linkedin.com/company/blockchain-innovations
                     var name: String? = null // Company's link
-                )
+                ): Serializable
             }
         }
     }

@@ -2,6 +2,7 @@ package com.learning.careerconnect.MVVM
 
 import android.content.Context
 import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -224,9 +225,9 @@ class JobMVVM : ViewModel() {
 
     // get all saved later jobs full data
     var resultOfGetAllSavedLaterJobsFull: MutableLiveData<GetAllSavedLaterJobsOM> = MutableLiveData()
-    fun getAllSavedLaterJobsFull(activity: MainActivity,token:String ,fragment:SavedJobFragment,skip:String) {
+    fun getAllSavedLaterJobsFull(context:Context,activity: MainActivity?, token:String, fragment: Fragment, skip:String) {
         try {
-            if (Constants.checkForInternet(activity)) {
+            if (Constants.checkForInternet(context)) {
                 val func = Constants.getInstance().create(Retrofit::class.java)
                 viewModelScope.launch {
                     val result = func.getAllSavedLaterJobs(token,skip,"10")
@@ -236,14 +237,22 @@ class JobMVVM : ViewModel() {
                         } else {
                             val errorBody = result.errorBody()?.string()
                             val errorMessage = Constants.parseErrorMessage(errorBody)
-                            fragment.errorFn(errorMessage ?: "Unknown error")
-                            activity.errorFn(errorMessage ?: "Unknown error")
+                            when(fragment)
+                            {
+                                is SavedJobFragment -> fragment.errorFn(errorMessage ?: "Unknown error")
+                                is AppliedJobFragment -> fragment.errorFn(errorMessage ?: "Unknown error")
+                            }
+                            activity?.errorFn(errorMessage ?: "Unknown error")
                         }
                     }
                 }
             } else {
-                fragment.errorFn("No internet connection")
-                activity.errorFn("No internet connection")
+                when(fragment)
+                {
+                    is SavedJobFragment -> fragment.errorFn("No internet connection")
+                    is AppliedJobFragment -> fragment.errorFn("No internet connection")
+                }
+                activity?.errorFn("No internet connection")
             }
         } catch (err: Exception) {
             Log.e("rk", "Exception occurred during sign up: ${err.message}")
