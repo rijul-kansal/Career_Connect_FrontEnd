@@ -1,6 +1,7 @@
 package com.learning.careerconnect.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.learning.careerconnect.Activity.BaseActivity
-import com.learning.careerconnect.Activity.MainActivity
+import com.learning.careerconnect.Activity.DisplayJobInDetailActivity
 import com.learning.careerconnect.Adapter.SavedJobAdapter
 import com.learning.careerconnect.MVVM.JobMVVM
 import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
@@ -36,7 +37,6 @@ class SavedJobFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // TODO add unsaved fn
         // TODO add next page fn
         binding = FragmentSavedJobBinding.inflate(inflater, container, false)
         jobMVVM = ViewModelProvider(this)[JobMVVM::class.java]
@@ -104,10 +104,10 @@ class SavedJobFragment : Fragment() {
         itemAdapter.setOnClickListener(object :
             SavedJobAdapter.OnClickListener {
             override fun onClick(position: Int, model: GetAllSavedLaterJobsOM.Data.Data.JobId) {
-//                var intent= Intent(requireActivity(), DisplayJobInDetailActivity::class.java)
-//                intent.putExtra(Constants.JOB_DATA1,model)
-//                intent.putExtra(Constants.TYPE_OF_FRAGMENT,"AppliedJobFragment")
-//                startActivity(intent)
+                var intent= Intent(requireActivity(), DisplayJobInDetailActivity::class.java)
+                intent.putExtra(Constants.JOB_DATA1,model)
+                intent.putExtra(Constants.TYPE_OF_FRAGMENT,"SavedJobFragment")
+                startActivity(intent)
 
             }
         })

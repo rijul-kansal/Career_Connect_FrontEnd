@@ -39,6 +39,8 @@ class DisplayJobInDetailActivity : BaseActivity() {
         binding= ActivityDisplayJobInDetailBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        Log.d("rk","gello")
         jobMVVM = ViewModelProvider(this)[JobMVVM::class.java]
 
         val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
@@ -50,13 +52,11 @@ class DisplayJobInDetailActivity : BaseActivity() {
             typeOfFragment = intent.getStringExtra(Constants.TYPE_OF_FRAGMENT).toString()
 
         }
-        if(typeOfFragment !="AppliedJobFragment" && intent.hasExtra(Constants.JOB_DATA))
+        if(typeOfFragment !="SavedJobFragment" && typeOfFragment !="AppliedJobFragment" && intent.hasExtra(Constants.JOB_DATA))
         {
             job = intent.getSerializableExtra(Constants.JOB_DATA) as SearchAllJobsOM.Data.Data
         }
-
-
-        if(typeOfFragment  == "AppliedJobFragment")
+        else if(typeOfFragment  == "AppliedJobFragment")
         {
             binding.LL10Btn.text = "Applied"
             binding.imageOfbookmark.visibility = View.GONE
@@ -72,6 +72,20 @@ class DisplayJobInDetailActivity : BaseActivity() {
                         model.jobAppliedId!!.minimumQualification,model.jobAppliedId!!.nameOfCompany,model.jobAppliedId!!.nameOfRole,model.jobAppliedId!!.noOfOpening,
                 model.jobAppliedId!!.noOfStudentsApplied,model.jobAppliedId!!.perks,model.jobAppliedId!!.postedDate,model.jobAppliedId!!.responsibilities,
                 model.jobAppliedId!!.roleCategory,model.jobAppliedId!!.skillsRequired,model.jobAppliedId!!.startDate,model.jobAppliedId!!.stopResponses,model.jobAppliedId!!.typeOfJob)
+
+        }
+        else if(typeOfFragment  == "SavedJobFragment")
+        {
+            Log.d("rk","gello")
+            var model  = intent.getSerializableExtra(Constants.JOB_DATA1) as GetAllSavedLaterJobsOM.Data.Data.JobId
+            var companyLink :ArrayList<SearchAllJobsOM.Data.Data.CompanyLink> = ArrayList()
+            companyLink.add(SearchAllJobsOM.Data.Data.CompanyLink(model.companyLinks?.get(0)?._id,model.companyLinks?.get(0)?.link,model.companyLinks?.get(0)?.name))
+            companyLink.add(SearchAllJobsOM.Data.Data.CompanyLink(model.companyLinks?.get(1)?._id,model.companyLinks?.get(1)?.link,model.companyLinks?.get(1)?.name))
+            job = SearchAllJobsOM.Data.Data(model.__v,model._id,model.aboutCompany,companyLink,
+                model.costToCompany,model.descriptionAboutRole,model.durationOfInternship,model.lastDateToApply,model.location,
+                model.minimumQualification,model.nameOfCompany,model.nameOfRole,model.noOfOpening,
+                model.noOfStudentsApplied,model.perks,model.postedDate,model.responsibilities,
+                model.roleCategory,model.skillsRequired,model.startDate,model.stopResponses,model.typeOfJob)
 
         }
         populateDate()
@@ -131,7 +145,7 @@ class DisplayJobInDetailActivity : BaseActivity() {
                     )
                 }
 
-                Log.d("rk",data.toString())
+                removeJobFromSharedPreference(job)
                 finish()
             }
         })
@@ -193,6 +207,8 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 var editor = sharedPreference1.edit()
                 editor.putString(Constants.ONLY_JOBID_ARR,jobIdArr.toString())
                 editor.commit()
+
+                removeJobFromSharedPreference(job)
             }
         })
         if(jobIdArr.contains(job._id))
@@ -209,6 +225,28 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 .placeholder(R.drawable.career_connect_white_bg)
                 .into(binding.imageOfbookmark)
         }
+    }
+
+    private fun removeJobFromSharedPreference(job: SearchAllJobsOM. Data. Data) {
+        val gson = Gson()
+        val sharedPreferenceToGetData = getSharedPreferences(Constants.FULL_JOBID_SP, Context.MODE_PRIVATE)
+        val fileData = sharedPreferenceToGetData.getString(Constants.FULL_JOBID_ARR, null)
+        val listType = object : TypeToken<ArrayList<GetAllSavedLaterJobsOM.Data.Data.JobId>>() {}.type
+        val jobsArr = gson.fromJson<ArrayList<GetAllSavedLaterJobsOM.Data.Data.JobId>>(fileData, listType)
+        var index=0
+        for(i in jobsArr)
+        {
+            if(i._id == job._id)
+            {
+                break
+            }
+            index++
+        }
+        jobsArr.removeAt(index)
+        val e=sharedPreferenceToGetData.edit()
+        val jsonString = gson.toJson(jobsArr)
+        e.putString(Constants.FULL_JOBID_ARR,jsonString)
+        e.apply()
     }
 
     private fun castSearchJobToAppliedJob(job:SearchAllJobsOM.Data.Data): GetAllSavedLaterJobsOM.Data.Data.JobId {
