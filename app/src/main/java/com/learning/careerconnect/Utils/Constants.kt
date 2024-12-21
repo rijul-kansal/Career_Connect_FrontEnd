@@ -33,6 +33,8 @@ object Constants {
     const val ONLY_JOBID_ARR="only job id array"
     const val FULL_JOBID_ARR="full job details array"
     const val TYPE_OF_FRAGMENT= "from which fragment we moved"
+    const val TYPE_OF_QUIZ="type of quiz"
+
     val baseUrl = "https://career-connect-drxp.onrender.com"
 
 

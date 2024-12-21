@@ -20,7 +20,7 @@ import kotlin.math.abs
 
 open class BaseActivity : AppCompatActivity() {
     lateinit  var countDownTimer: CountDownTimer
-
+    lateinit var dialog:Dialog
     // checking if only one activity is there or not in stack or not
     // if true then only 1 activity is there in stack
     fun isOnlyOneActivityInStack(): Boolean {
@@ -108,4 +108,16 @@ open class BaseActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_NOTIFICATION_POLICY,
         Manifest.permission.POST_NOTIFICATIONS
     )
+
+    fun showProgressBar(activity: Activity)
+    {
+        dialog = Dialog(activity)
+        dialog.setContentView(R.layout.progress_bar)
+        dialog.show()
+    }
+
+    fun cancelProgressBar()
+    {
+        dialog.dismiss()
+    }
 }

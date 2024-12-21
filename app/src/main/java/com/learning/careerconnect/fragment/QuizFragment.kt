@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.learning.careerconnect.Activity.BaseActivity
+import com.learning.careerconnect.Activity.QuizDisplayActivity
 import com.learning.careerconnect.Adapter.QuizTypeShownAdapter
 import com.learning.careerconnect.Model.GetQuizScoreEarnedOM
 import com.learning.careerconnect.Utils.Constants
@@ -61,8 +62,9 @@ class QuizFragment : Fragment() {
         itemAdapter.setOnClickListener(object :
             QuizTypeShownAdapter.OnClickListener {
             override fun onClick(position: Int, model: String) {
-                Log.d("rk",position.toString())
-               BaseActivity().toast(model,requireContext())
+                val intent = Intent(requireActivity(), QuizDisplayActivity::class.java)
+                intent.putExtra(Constants.TYPE_OF_QUIZ,model)
+                startActivity(intent)
             }
         })
     }

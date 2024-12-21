@@ -6,6 +6,7 @@ import com.learning.careerconnect.Model.ApplyJobOM
 import com.learning.careerconnect.Model.GetAllAppliedJobsOM
 import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
+import com.learning.careerconnect.Model.GetQuizQuestionDisplayOM
 import com.learning.careerconnect.Model.GetQuizScoreEarnedOM
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
@@ -33,6 +34,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface Retrofit {
@@ -97,4 +99,9 @@ interface Retrofit {
     @GET("/v1/questions/certificateEarnedByUser")
     suspend fun getQuizScores(
         @Header("authorization") authHeader:String, ) : Response<GetQuizScoreEarnedOM>
+
+    @GET("/v1/questions/{topic}")
+    suspend fun getQuizQuestion(
+        @Header("authorization") authHeader:String,
+        @Path("topic") preferredJobType: String? = null) : Response<GetQuizQuestionDisplayOM>
 }
