@@ -3,7 +3,8 @@ package com.learning.careerconnect.Model
 data class AllSavedJobsJobIdOnlyOM(
     var `data`: Data? = null,
     var length: Int? = null, // 2
-    var status: String? = null // success
+    var status: String? = null ,
+    var message: String? = null // success
 ) {
     data class Data(
         var `data`: List<Data?>? = null

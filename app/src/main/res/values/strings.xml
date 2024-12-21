@@ -80,4 +80,5 @@
     <string name="about_role">About Role</string>
     <string name="skills_required">Skills Required</string>
     <string name="perks">Perks</string>
+    <string name="choose_one_option_below">Choose One Option below</string>
 </resources>

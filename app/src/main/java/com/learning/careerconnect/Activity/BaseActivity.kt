@@ -1,6 +1,7 @@
 package com.learning.careerconnect.Activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.Dialog
@@ -8,7 +9,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.TextView
 import android.widget.Toast
@@ -20,10 +20,9 @@ import kotlin.math.abs
 
 open class BaseActivity : AppCompatActivity() {
     lateinit  var countDownTimer: CountDownTimer
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
+    // checking if only one activity is there or not in stack or not
+    // if true then only 1 activity is there in stack
     fun isOnlyOneActivityInStack(): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val tasks = activityManager.appTasks
@@ -35,15 +34,15 @@ open class BaseActivity : AppCompatActivity() {
         }
         return false
     }
+
+    // display back btn
     fun showBackBtnDialog(message:String,context: Context)
     {
         val dialog = Dialog(context)
         dialog.setContentView(R.layout.exit_dialog)
-
         var text=dialog.findViewById<TextView>(R.id.textViewExitDialog)
         var okBtn=dialog.findViewById<TextView>(R.id.okBtnExitDialog)
         var cancelBtn=dialog.findViewById<TextView>(R.id.cancelBtnExitDialog)
-
         text.text = message
         okBtn.setOnClickListener {
             finish()
@@ -54,13 +53,12 @@ open class BaseActivity : AppCompatActivity() {
         dialog.show()
     }
 
-
-
+    // toast message
     fun toast(message:String,context: Context)
     {
         Toast.makeText(context,message,Toast.LENGTH_LONG).show()
     }
-
+    // count down fns
     fun countDownTimerFn(view:TextView,time:Long)
     {
         view.isClickable = false
@@ -78,7 +76,8 @@ open class BaseActivity : AppCompatActivity() {
             }
         }.start()
     }
-
+    // checking notification permission
+    @SuppressLint("InlinedApi")
     fun checkNotificationPermission(context: Activity): Boolean {
         return (ContextCompat.checkSelfPermission(
             context,
@@ -91,7 +90,6 @@ open class BaseActivity : AppCompatActivity() {
     // else req permission
     fun requestPermission(context: Activity) {
         ActivityCompat.requestPermissions(context ,permissions(), 1)
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)

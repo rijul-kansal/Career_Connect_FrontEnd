@@ -35,6 +35,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     lateinit var binding:ActivityMainBinding
     lateinit var userVM: UserMVVM
     lateinit var jobVM: JobMVVM
+    lateinit var quizVM: QuizMVVM
     var doubleBackToExitPressedOnce = false
     lateinit var token:String
     lateinit var typeOfUser:String
@@ -49,6 +50,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         allSavedJobsJobId = ArrayList()
         userVM = ViewModelProvider(this)[UserMVVM::class.java]
         jobVM = ViewModelProvider(this)[JobMVVM::class.java]
+        quizVM = ViewModelProvider(this)[QuizMVVM::class.java]
         val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
         val sharedPreference1 = getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
         typeOfUser = sharedPreference1.getString(Constants.TYPE_OF_USER,"rk").toString()

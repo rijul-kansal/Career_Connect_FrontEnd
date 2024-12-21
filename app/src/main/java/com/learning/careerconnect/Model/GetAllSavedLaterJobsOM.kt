@@ -5,7 +5,8 @@ import java.io.Serializable
 data class GetAllSavedLaterJobsOM(
     var `data`: Data? = null,
     var length: Int? = null, // 3
-    var status: String? = null // success
+    var status: String? = null ,
+    var message: String? = null // success
 ) : Serializable {
     data class Data(
         var `data`: List<Data?>? = null

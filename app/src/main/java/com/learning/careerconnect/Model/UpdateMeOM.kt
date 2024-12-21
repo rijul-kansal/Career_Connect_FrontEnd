@@ -2,7 +2,9 @@ package com.learning.careerconnect.Model
 
 data class UpdateMeOM(
     var `data`: Data? = null,
-    var status: String? = null // success
+    var status: String? = null,
+    var message:String?=null
+    // success
 ) {
     data class Data(
         var `data`: Data? = null

@@ -35,38 +35,42 @@ class DisplayJobInDetailActivity : BaseActivity() {
     lateinit var jobMVVM:JobMVVM
     lateinit var token :String
     var typeOfFragment:String=""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         binding= ActivityDisplayJobInDetailBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        Log.d("rk","gello")
+        // initializing something
         jobMVVM = ViewModelProvider(this)[JobMVVM::class.java]
 
+        // shared preference for token
         val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
         token = sharedPreference.getString(Constants.JWT_TOKEN_SP,"rk").toString()
 
-
+        // getting intent fragment info
+        // from which fragment this activity is called
         if(intent.hasExtra(Constants.TYPE_OF_FRAGMENT))
-        {
             typeOfFragment = intent.getStringExtra(Constants.TYPE_OF_FRAGMENT).toString()
 
-        }
+        // if fragment is from Search Fragment then load data
         if(typeOfFragment !="SavedJobFragment" && typeOfFragment !="AppliedJobFragment" && intent.hasExtra(Constants.JOB_DATA))
-        {
             job = intent.getSerializableExtra(Constants.JOB_DATA) as SearchAllJobsOM.Data.Data
-        }
+        // if fragment is from Applied Job  Fragment then load data
         else if(typeOfFragment  == "AppliedJobFragment")
         {
+            // apply btn text will be applied only
             binding.LL10Btn.text = "Applied"
+            // no need of bookmark after apply
             binding.imageOfbookmark.visibility = View.GONE
+            // getting data from intent
             var model  = intent.getSerializableExtra(Constants.JOB_DATA1) as GetAllAppliedJobsOM.Data.Data
-            var companyLink :ArrayList<SearchAllJobsOM.Data.Data.CompanyLink> = ArrayList()
 
+            // converting into SSearchAllJobsOM.Data.Data
+            var companyLink :ArrayList<SearchAllJobsOM.Data.Data.CompanyLink> = ArrayList()
             companyLink.add(SearchAllJobsOM.Data.Data.CompanyLink(model.jobAppliedId!!.companyLinks?.get(0)?._id,model.jobAppliedId!!.companyLinks?.get(0)?.link,model.jobAppliedId!!.companyLinks?.get(0)?.name))
             companyLink.add(SearchAllJobsOM.Data.Data.CompanyLink(model.jobAppliedId!!.companyLinks?.get(1)?._id,model.jobAppliedId!!.companyLinks?.get(1)?.link,model.jobAppliedId!!.companyLinks?.get(1)?.name))
-
-            Log.d("rk",companyLink.toString())
             job = SearchAllJobsOM.Data.Data(model.jobAppliedId!!.__v,model.jobAppliedId!!._id,model.jobAppliedId!!.aboutCompany,companyLink,
                 model.jobAppliedId!!.costToCompany,model.jobAppliedId!!.descriptionAboutRole,model.jobAppliedId!!.durationOfInternship,model.jobAppliedId!!.lastDateToApply,model.jobAppliedId!!.location,
                         model.jobAppliedId!!.minimumQualification,model.jobAppliedId!!.nameOfCompany,model.jobAppliedId!!.nameOfRole,model.jobAppliedId!!.noOfOpening,
@@ -74,10 +78,12 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 model.jobAppliedId!!.roleCategory,model.jobAppliedId!!.skillsRequired,model.jobAppliedId!!.startDate,model.jobAppliedId!!.stopResponses,model.jobAppliedId!!.typeOfJob)
 
         }
+        // fragment is load from Saved Job Fragment
         else if(typeOfFragment  == "SavedJobFragment")
         {
-            Log.d("rk","gello")
+            // getting data from intent
             var model  = intent.getSerializableExtra(Constants.JOB_DATA1) as GetAllSavedLaterJobsOM.Data.Data.JobId
+            // converting into SSearchAllJobsOM.Data.Data
             var companyLink :ArrayList<SearchAllJobsOM.Data.Data.CompanyLink> = ArrayList()
             companyLink.add(SearchAllJobsOM.Data.Data.CompanyLink(model.companyLinks?.get(0)?._id,model.companyLinks?.get(0)?.link,model.companyLinks?.get(0)?.name))
             companyLink.add(SearchAllJobsOM.Data.Data.CompanyLink(model.companyLinks?.get(1)?._id,model.companyLinks?.get(1)?.link,model.companyLinks?.get(1)?.name))
@@ -88,12 +94,31 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 model.roleCategory,model.skillsRequired,model.startDate,model.stopResponses,model.typeOfJob)
 
         }
+        // after getting data populate data
         populateDate()
+
+        // requirement -- to show different bookmark status
+        // used in when user come from Search Job Fragmnet
         val sharedPreference1 =  getSharedPreferences(Constants.ONLY_JOBID_SP, Context.MODE_PRIVATE)
         val gson = GsonBuilder().create()
         val fileData= sharedPreference1.getString(Constants.ONLY_JOBID_ARR,"0")
         val jobIdArr = gson.fromJson(fileData , Array<String>::class.java).toMutableList()
-
+        // change bookmark
+        if(jobIdArr.contains(job._id))
+        {
+            Glide.with(this)
+                .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_closed.png")
+                .placeholder(R.drawable.career_connect_white_bg)
+                .into(binding.imageOfbookmark)
+        }
+        else
+        {
+            Glide.with(this)
+                .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_open.png")
+                .placeholder(R.drawable.career_connect_white_bg)
+                .into(binding.imageOfbookmark)
+        }
+        // apply btn is only clickable when user not come from Applied job Fragment
         binding.LL10.setOnClickListener {
             if(typeOfFragment != "AppliedJobFragment")
             {
@@ -103,18 +128,22 @@ class DisplayJobInDetailActivity : BaseActivity() {
 
         }
 
+        // getting data if user applied and save  in local storage
         jobMVVM.observerForApplyForJob().observe(this, Observer {
             result->
             Log.d("rk","apply for job")
             binding.applyBtnProgressBar.visibility = View.GONE
             if(result.status == "success")
             {
+                // reading data from sqlite
                 val dbHandler = JobAppliedDB(this)
                 val data= dbHandler.read()
+                // if data size is greater than 10 then remove last element
                 if(data.size >=10)
                     data.removeAt(data.size-1)
                 val model = getModel()
                 data.add(0,model)
+                // first deleting all  element and then adding new element
                 dbHandler.deleteAll()
 
                 for (i in 0..data.size - 1) {
@@ -144,11 +173,12 @@ class DisplayJobInDetailActivity : BaseActivity() {
                         type = job.type
                     )
                 }
-
+                // remove job from saved preference
                 removeJobFromSharedPreference(job)
                 finish()
             }
         })
+        // if job  is unsaved then save else save fro bookmark
         binding.imageOfbookmark.setOnClickListener {
             if(jobIdArr.contains(job._id))
             {
@@ -159,21 +189,29 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 jobMVVM.saveJobForLater(this,"Bearer $token", SavedJobIM(job._id))
             }
         }
+
+        // saving job observer
         jobMVVM.observerForSaveJobForLater().observe(this, Observer {
                 result->
             Log.d("rk","save job for later api")
             if(result.status == "success")
             {
+                // change bookmark image
                 Glide.with(this)
                     .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_closed.png")
                     .placeholder(R.drawable.career_connect_white_bg)
                     .into(binding.imageOfbookmark)
+
+
                 binding.aboutRole.text=job.descriptionAboutRole
                 job._id?.let { jobIdArr.add(it) }
+                // saving data toh job id only
                 var editor = sharedPreference1.edit()
                 editor.putString(Constants.ONLY_JOBID_ARR,jobIdArr.toString())
                 editor.apply()
 
+
+                // getting save job  in local database
                 val sharedPreferenceToGetData = getSharedPreferences(Constants.FULL_JOBID_SP, Context.MODE_PRIVATE)
                 val fileData = sharedPreferenceToGetData.getString(Constants.FULL_JOBID_ARR, null)
                 val listType = object : TypeToken<ArrayList<GetAllSavedLaterJobsOM.Data.Data.JobId>>() {}.type
@@ -192,39 +230,27 @@ class DisplayJobInDetailActivity : BaseActivity() {
                 e.apply()
             }
         })
+        // unsaving job from DB
         jobMVVM.observerForUnSaveJob().observe(this, Observer {
                 result->
             Log.d("rk","un save job for later api")
-            Log.d("rk",result.toString())
             if(result.status == "success")
             {
+                // change bookmark image
                 Glide.with(this)
                     .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_open.png")
                     .placeholder(R.drawable.career_connect_white_bg)
                     .into(binding.imageOfbookmark)
                 binding.aboutRole.text=job.descriptionAboutRole
+                // remoing from local DB
                 jobIdArr.remove(job._id)
                 var editor = sharedPreference1.edit()
                 editor.putString(Constants.ONLY_JOBID_ARR,jobIdArr.toString())
                 editor.commit()
-
+                // removing from shared preference also
                 removeJobFromSharedPreference(job)
             }
         })
-        if(jobIdArr.contains(job._id))
-        {
-            Glide.with(this)
-                .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_closed.png")
-                .placeholder(R.drawable.career_connect_white_bg)
-                .into(binding.imageOfbookmark)
-        }
-        else
-        {
-            Glide.with(this)
-                .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/bookmark_open.png")
-                .placeholder(R.drawable.career_connect_white_bg)
-                .into(binding.imageOfbookmark)
-        }
     }
 
     private fun removeJobFromSharedPreference(job: SearchAllJobsOM. Data. Data) {

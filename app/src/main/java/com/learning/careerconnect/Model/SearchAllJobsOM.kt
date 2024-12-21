@@ -6,7 +6,8 @@ data class SearchAllJobsOM(
     var `data`: Data? = null,
     var length: Int? = null, // 2
     var status: String? = null, // success
-    var totalJobs: Int? = null // 2
+    var totalJobs: Int? = null ,
+    var message: String? = null // success// 2
 ) : Serializable {
     data class Data(
         var `data`: List<Data?>? = null

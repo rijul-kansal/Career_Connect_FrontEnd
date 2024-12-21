@@ -12,6 +12,7 @@ class IntroActivity : BaseActivity() {
         binding= ActivityIntroBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        // getting intro image
         Glide
             .with(this)
             .load("https://career-connect-bkt.s3.ap-south-1.amazonaws.com/intro_image.png")
@@ -23,7 +24,7 @@ class IntroActivity : BaseActivity() {
         binding.signUp.setOnClickListener {
             startActivity(Intent(this,SignUpActivity::class.java))
         }
-
+        // checking permission
         if(!checkNotificationPermission(this))
         {
             requestPermission(this)

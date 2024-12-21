@@ -5,7 +5,8 @@ import java.io.Serializable
 data class GetAllAppliedJobsOM(
     var `data`: Data,
     var length: Int ,
-    var status: String
+    var status: String,
+    var message: String?
 ) : Serializable {
     data class Data(
         var `data`: List<Data>

@@ -17,6 +17,7 @@ import com.learning.careerconnect.Model.ResetPasswordOM
 import com.learning.careerconnect.Model.SavedJobIM
 import com.learning.careerconnect.Model.SavedJobOM
 import com.learning.careerconnect.Model.SearchAllJobsOM
+import com.learning.careerconnect.Model.GetQuizTypeOM
 import com.learning.careerconnect.Model.SignUpIM
 import com.learning.careerconnect.Model.SignUpOM
 import com.learning.careerconnect.Model.UnSavedJobIM
@@ -87,5 +88,10 @@ interface Retrofit {
         @Header("authorization") authHeader:String,
         @Query("skip") skip: String? = null,
         @Query("limit") limit: String? = null) : Response<GetAllSavedLaterJobsOM>
+
+    @GET("/v1/questions")
+    suspend fun getQuizTypes(
+        @Header("authorization") authHeader:String, ) : Response<GetQuizTypeOM>
+
 
 }
