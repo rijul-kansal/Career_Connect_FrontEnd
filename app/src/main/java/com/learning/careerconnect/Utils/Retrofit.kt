@@ -6,6 +6,7 @@ import com.learning.careerconnect.Model.ApplyJobOM
 import com.learning.careerconnect.Model.GetAllAppliedJobsOM
 import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
+import com.learning.careerconnect.Model.GetQuizScoreEarnedOM
 import com.learning.careerconnect.Model.LoginIM
 import com.learning.careerconnect.Model.LoginOM
 import com.learning.careerconnect.Model.RefreshTokenIM
@@ -93,5 +94,7 @@ interface Retrofit {
     suspend fun getQuizTypes(
         @Header("authorization") authHeader:String, ) : Response<GetQuizTypeOM>
 
-
+    @GET("/v1/questions/certificateEarnedByUser")
+    suspend fun getQuizScores(
+        @Header("authorization") authHeader:String, ) : Response<GetQuizScoreEarnedOM>
 }

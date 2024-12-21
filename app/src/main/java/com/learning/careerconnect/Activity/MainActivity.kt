@@ -18,6 +18,7 @@ import com.google.gson.Gson
 import com.learning.careerconnect.Cashes.JobAppliedDB
 import com.learning.careerconnect.MVVM.*
 import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
+import com.learning.careerconnect.Model.GetQuizScoreEarnedOM
 import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
@@ -47,22 +48,29 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // initializing variable
         allSavedJobsJobId = ArrayList()
         userVM = ViewModelProvider(this)[UserMVVM::class.java]
         jobVM = ViewModelProvider(this)[JobMVVM::class.java]
         quizVM = ViewModelProvider(this)[QuizMVVM::class.java]
         val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
         val sharedPreference1 = getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
+
+        // toolbar stuff
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
+        binding.navView.setNavigationItemSelectedListener(this)
+        // user or recruiter
         typeOfUser = sharedPreference1.getString(Constants.TYPE_OF_USER,"rk").toString()
         token = sharedPreference.getString(Constants.JWT_TOKEN_SP,"rk").toString()
+
+        // getting fcm token from sign ups
         if(intent.hasExtra(Constants.FCM_TOKEN))
         {
             val fcmToken =intent.getStringExtra(Constants.FCM_TOKEN).toString()
             userVM.updateMe(UpdateMeIM(fcmToken = fcmToken), this, this, "Bearer ${token}")
         }
-        setSupportActionBar(binding.toolbar)
-        binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
-        binding.navView.setNavigationItemSelectedListener(this)
+
 
         if(typeOfUser == "User")
         {
@@ -72,34 +80,44 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         {
             binding.navView.inflateMenu(R.menu.recruiter_menu)
         }
+
+        // header stuff
         val toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open_nav, R.string.close_nav)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.drawerArrowDrawable.color = resources.getColor(R.color.white)
         toggle.syncState()
-
-
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SearchJobFragment()).commit()
             binding.navView.setCheckedItem(R.id.searchJob)
         }
+
+        // calling saved job fn
         jobVM.getAllSavedJobOnlyJobId(this,"Boarer $token")
-        jobVM.getAllAppliedJobs(this,"Bearer $token",AppliedJobFragment(),"0")
         jobVM.getAllSavedLaterJobsFull(this,this,"Bearer $token", SavedJobFragment(),"0")
+        // calling applied job fns
+        jobVM.getAllAppliedJobs(this,"Bearer $token",AppliedJobFragment(),"0")
+        // calling quiz model fns
+        quizVM.getQuizType(this,"Bearer $token")
+        quizVM.getScoreEarned(this,"Bearer $token")
+
+
+        // observer for only job id saved fns
         jobVM.observerForGetAllSavedJobOnlyJobId().observe(this , Observer {
             res->
             Log.d("rk" ,"SAVED JOB ONLY JOBS")
-
+            //adding in array
             for(i in 0..res.data!!.data!!.size-1)
             {
                 allSavedJobsJobId.add((res.data!!.data?.get(i)!!.jobId).toString())
             }
-
+            // adding data in local storage
             val sharedPreference =  getSharedPreferences(Constants.ONLY_JOBID_SP, Context.MODE_PRIVATE)
             var editor = sharedPreference.edit()
             editor.putString(Constants.ONLY_JOBID_ARR,allSavedJobsJobId.toString())
             editor.commit()
         })
+        // observer for
         jobVM.observerForGetAllAppliedJobs().observe(this, Observer { result ->
             Log.d("rk" ,"Applied Job API")
             if (result.status == "success") {
@@ -144,10 +162,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         userVM.observerForUpdateMe().observe(this, Observer {
             Log.d("rk","Update User API")
         })
+        // observer for full saved jobs
         jobVM.observerForGetAllSavedLaterJobsFull().observe(this , Observer {
                 res->
             Log.d("rk" ,"SAVED Later JOBS fully")
-
+            // saving data in local storage
             var arr = ArrayList<GetAllSavedLaterJobsOM.Data.Data.JobId>()
             for(i in res.data?.data!!)
             {
@@ -160,6 +179,28 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             val sharedPreference = getSharedPreferences(Constants.FULL_JOBID_SP, Context.MODE_PRIVATE)
             val editor = sharedPreference.edit()
             editor.putString(Constants.FULL_JOBID_ARR, jsonString)
+            editor.commit()
+        })
+        quizVM.observerForgetQuizType().observe(this , Observer {
+                res->
+            // saving data in local storage
+            var arr  = res.data!!.data as ArrayList<String>
+            val gson = Gson()
+            val jsonString = gson.toJson(arr)
+            val sharedPreference = getSharedPreferences(Constants.Quiz_SP_PN, Context.MODE_PRIVATE)
+            val editor = sharedPreference.edit()
+            editor.putString(Constants.TYPE_OF_QUIZ_User_CAN_GIVE, jsonString)
+            editor.commit()
+        })
+
+        quizVM.observerForGetScoreEarned().observe(this , Observer {
+                res->
+            // saving data in local storage
+            val gson = Gson()
+            val jsonString = gson.toJson(res)
+            val sharedPreference = getSharedPreferences(Constants.Quiz_SP_PN, Context.MODE_PRIVATE)
+            val editor = sharedPreference.edit()
+            editor.putString(Constants.CERTIFICATE_EARNED, jsonString)
             editor.commit()
         })
     }

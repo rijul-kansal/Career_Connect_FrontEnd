@@ -20,10 +20,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.QuizDisplayActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.DisplayJobInDetailActivity"
-            android:theme="@style/mainActivityTheme"
-            android:exported="true" >
-        </activity>
+            android:exported="true"
+            android:theme="@style/mainActivityTheme"></activity>
         <activity
             android:name=".Activity.ChatActivity"
             android:exported="true"
