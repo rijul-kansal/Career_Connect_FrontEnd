@@ -82,4 +82,7 @@ dependencies {
     // swpie to refresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
+    // socket
+    implementation("io.socket:socket.io-client:2.0.0")
+
 }
