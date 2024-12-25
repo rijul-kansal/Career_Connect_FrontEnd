@@ -34,8 +34,9 @@ object Constants {
     const val FULL_JOBID_ARR="full job details array"
     const val TYPE_OF_FRAGMENT= "from which fragment we moved"
     const val TYPE_OF_QUIZ="type of quiz"
-
-    val baseUrl = "https://career-connect-drxp.onrender.com"
+    const val SCORE="score"
+//    val baseUrl = "https://career-connect-drxp.onrender.com"
+    val baseUrl = "https://career-connect-1-5w45.onrender.com"
 
 
     var client = OkHttpClient.Builder()

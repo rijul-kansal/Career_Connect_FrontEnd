@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.CountDownTimer
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -19,7 +20,7 @@ import com.learning.careerconnect.R
 import kotlin.math.abs
 
 open class BaseActivity : AppCompatActivity() {
-    lateinit  var countDownTimer: CountDownTimer
+    open lateinit  var countDownTimer: CountDownTimer
     lateinit var dialog:Dialog
     // checking if only one activity is there or not in stack or not
     // if true then only 1 activity is there in stack
@@ -36,8 +37,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     // display back btn
-    fun showBackBtnDialog(message:String,context: Context)
-    {
+    fun showBackBtnDialog(message:String,context: Context) {
         val dialog = Dialog(context)
         dialog.setContentView(R.layout.exit_dialog)
         var text=dialog.findViewById<TextView>(R.id.textViewExitDialog)
@@ -76,6 +76,7 @@ open class BaseActivity : AppCompatActivity() {
             }
         }.start()
     }
+
     // checking notification permission
     @SuppressLint("InlinedApi")
     fun checkNotificationPermission(context: Activity): Boolean {

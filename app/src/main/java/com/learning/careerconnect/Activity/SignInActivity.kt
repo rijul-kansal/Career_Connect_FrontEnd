@@ -85,9 +85,7 @@ class SignInActivity : BaseActivity() {
                 resultOfLoginUser = it
                 getFCM()
 
-                binding.progressBar.visibility= View.INVISIBLE
-                binding.signInBtn.visibility= View.VISIBLE
-                toast("Successfully Login!!!",this)
+
             }
             else
             {
@@ -333,6 +331,9 @@ class SignInActivity : BaseActivity() {
                 i.putExtra(Constants.FCM_TOKEN,token)
                 Log.d("rk","fcm ${token}")
                 startActivity(i)
+                binding.progressBar.visibility= View.INVISIBLE
+                binding.signInBtn.visibility= View.VISIBLE
+                toast("Successfully Login!!!",this)
                 finish()
             } else {
                 Log.d("rk", "Token is null")

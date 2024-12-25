@@ -20,11 +20,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.QuizResultActivity"
+            android:exported="true"
+            android:theme="@style/mainActivityTheme" />
+        <activity
             android:name=".Activity.QuizDisplayActivity"
             android:exported="true"
-            android:theme="@style/mainActivityTheme">
-
-        </activity>
+            android:theme="@style/mainActivityTheme"/>
         <activity
             android:name=".Activity.DisplayJobInDetailActivity"
             android:exported="true"
@@ -66,7 +68,6 @@
             android:theme="@style/splashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

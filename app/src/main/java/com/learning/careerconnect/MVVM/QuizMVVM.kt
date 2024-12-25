@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.careerconnect.Activity.MainActivity
 import com.learning.careerconnect.Activity.QuizDisplayActivity
+import com.learning.careerconnect.Model.AddQuizScoreToDBIM
+import com.learning.careerconnect.Model.AddQuizScoreToDBOM
 import com.learning.careerconnect.Model.GetQuizQuestionDisplayOM
 import com.learning.careerconnect.Model.GetQuizScoreEarnedOM
 import com.learning.careerconnect.Model.GetQuizTypeOM
@@ -96,4 +98,30 @@ class QuizMVVM : ViewModel() {
         }
     }
     fun observerForGetQuestion(): LiveData<GetQuizQuestionDisplayOM> = resultOfGetQuestion
+
+    var resultOfAddQuizScoreToDB: MutableLiveData<AddQuizScoreToDBOM> = MutableLiveData()
+    fun addQuizScoreToDB(activity: QuizDisplayActivity,input:AddQuizScoreToDBIM, token:String) {
+        try {
+            if (Constants.checkForInternet(activity)) {
+                val func = Constants.getInstance().create(Retrofit::class.java)
+                viewModelScope.launch {
+                    val result = func.addQuizScoreToDB(token,input)
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccessful) {
+                            resultOfAddQuizScoreToDB.value = result.body()
+                        } else {
+                            val errorBody = result.errorBody()?.string()
+                            val errorMessage = Constants.parseErrorMessage(errorBody)
+                            activity.errorFn(errorMessage ?: "Unknown error")
+                        }
+                    }
+                }
+            } else {
+                activity.errorFn("No internet connection")
+            }
+        } catch (err: Exception) {
+            Log.e("rk", "Exception occurred during sign up: ${err.message}")
+        }
+    }
+    fun observerForAddQuizScoreToDB(): LiveData<AddQuizScoreToDBOM> = resultOfAddQuizScoreToDB
 }

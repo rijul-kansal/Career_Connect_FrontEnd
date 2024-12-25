@@ -1,5 +1,6 @@
 package com.learning.careerconnect.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -29,7 +30,6 @@ class QuizFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentQuizBinding.inflate(inflater, container, false)
         getLocalData()
 
@@ -41,7 +41,6 @@ class QuizFragment : Fragment() {
         val sharedPreference = requireActivity().getSharedPreferences(Constants.Quiz_SP_PN, Context.MODE_PRIVATE)
         val quizType = sharedPreference.getString(Constants.TYPE_OF_QUIZ_User_CAN_GIVE,"")
         val quizScore = sharedPreference.getString(Constants.CERTIFICATE_EARNED,"")
-
         val gson = Gson()
         val listType = object : TypeToken<ArrayList<String>>() {}.type
         quizTypeArr = gson.fromJson(quizType, listType)
@@ -61,10 +60,13 @@ class QuizFragment : Fragment() {
         binding.recyclerView.adapter = itemAdapter
         itemAdapter.setOnClickListener(object :
             QuizTypeShownAdapter.OnClickListener {
+            @SuppressLint("NotifyDataSetChanged")
             override fun onClick(position: Int, model: String) {
                 val intent = Intent(requireActivity(), QuizDisplayActivity::class.java)
                 intent.putExtra(Constants.TYPE_OF_QUIZ,model)
+
                 startActivity(intent)
+
             }
         })
     }

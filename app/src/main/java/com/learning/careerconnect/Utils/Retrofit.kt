@@ -1,5 +1,7 @@
 package com.learning.careerconnect.Utils
 
+import com.learning.careerconnect.Model.AddQuizScoreToDBIM
+import com.learning.careerconnect.Model.AddQuizScoreToDBOM
 import com.learning.careerconnect.Model.AllSavedJobsJobIdOnlyOM
 import com.learning.careerconnect.Model.ApplyJobIM
 import com.learning.careerconnect.Model.ApplyJobOM
@@ -95,6 +97,10 @@ interface Retrofit {
     @GET("/v1/questions")
     suspend fun getQuizTypes(
         @Header("authorization") authHeader:String, ) : Response<GetQuizTypeOM>
+
+    @POST("/v1/questions")
+    suspend fun addQuizScoreToDB(
+        @Header("authorization") authHeader:String, @Body body : AddQuizScoreToDBIM) : Response<AddQuizScoreToDBOM>
 
     @GET("/v1/questions/certificateEarnedByUser")
     suspend fun getQuizScores(
