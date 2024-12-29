@@ -35,8 +35,7 @@ object Constants {
     const val TYPE_OF_FRAGMENT= "from which fragment we moved"
     const val TYPE_OF_QUIZ="type of quiz"
     const val SCORE="score"
-//    val baseUrl = "https://career-connect-drxp.onrender.com"
-    val baseUrl = "https://career-connect-1-5w45.onrender.com"
+    val baseUrl = "https://career-connect-379g.onrender.com"
 
 
     var client = OkHttpClient.Builder()
