@@ -24,21 +24,21 @@ class ProfileJobFragment : Fragment() {
         binding = FragmentProfileJobBinding.inflate(inflater, container, false)
         /**
          *Personal
-         *     name
-         *     image
-         *     currentLocation
-         *     Gender
-         *     DOB
-         *     Mobile No
-         *     Email
-         *     language
+         *     name d
+         *     image d
+         *     currentLocation d
+         *     Gender d
+         *     DOB d
+         *     Mobile No d
+         *     Email d
+         *     language d
+         *Education
+         *     education
+         *     skills
          *     Resume Link
          *     Git link
          *     portfolio link
          *     Coding Profile Link
-         *Education
-         *     education
-         *     skills
          *Experience
          *     Summary
          *     experience

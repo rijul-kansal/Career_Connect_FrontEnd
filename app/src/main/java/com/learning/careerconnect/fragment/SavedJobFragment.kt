@@ -37,7 +37,6 @@ class SavedJobFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // TODO add next page fn
         binding = FragmentSavedJobBinding.inflate(inflater, container, false)
         jobMVVM = ViewModelProvider(this)[JobMVVM::class.java]
         val sharedPreferenceToken=

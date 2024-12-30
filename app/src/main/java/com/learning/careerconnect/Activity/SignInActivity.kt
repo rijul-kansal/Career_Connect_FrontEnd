@@ -73,6 +73,7 @@ class SignInActivity : BaseActivity() {
         }
         authVM.observerForLoginUser().observe(this, Observer{
             Log.d("rk","Login api")
+            Log.d("rk",it.toString())
             if(it.status == "success")
             {
                 val sharedPreference =  getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
