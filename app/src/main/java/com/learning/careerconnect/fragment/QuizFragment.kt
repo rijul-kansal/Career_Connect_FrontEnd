@@ -15,6 +15,8 @@ import com.google.gson.Gson
 import com.learning.careerconnect.Activity.BaseActivity
 import com.learning.careerconnect.Activity.QuizDisplayActivity
 import com.learning.careerconnect.Adapter.QuizTypeShownAdapter
+import com.learning.careerconnect.MVVM.ExtMVVM
+import com.learning.careerconnect.MVVM.UserMVVM
 import com.learning.careerconnect.Model.GetQuizScoreEarnedOM
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.databinding.FragmentQuizBinding
@@ -26,6 +28,7 @@ class QuizFragment : Fragment() {
      lateinit var quizTypeArr : ArrayList<String>
      lateinit var  quizScoreArr :ArrayList<GetQuizScoreEarnedOM.Data.Data>
      lateinit var itemAdapter: QuizTypeShownAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

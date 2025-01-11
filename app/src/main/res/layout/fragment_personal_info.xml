@@ -293,6 +293,11 @@
                     android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold"/>
+                <View
+                    android:layout_marginBottom="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/dark_grey"/>
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

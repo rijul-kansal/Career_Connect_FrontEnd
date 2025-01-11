@@ -24,6 +24,10 @@ import com.learning.careerconnect.Model.SearchAllJobsOM
 import com.learning.careerconnect.Model.GetQuizTypeOM
 import com.learning.careerconnect.Model.SignUpIM
 import com.learning.careerconnect.Model.SignUpOM
+import com.learning.careerconnect.Model.SingleCityIM
+import com.learning.careerconnect.Model.SingleCityOM
+import com.learning.careerconnect.Model.SingleStateIM
+import com.learning.careerconnect.Model.SingleStateOM
 import com.learning.careerconnect.Model.UnSavedJobIM
 import com.learning.careerconnect.Model.UnSavedJobOM
 import com.learning.careerconnect.Model.UpdateMeIM
@@ -110,4 +114,9 @@ interface Retrofit {
     suspend fun getQuizQuestion(
         @Header("authorization") authHeader:String,
         @Path("topic") preferredJobType: String? = null) : Response<GetQuizQuestionDisplayOM>
+
+
+    @POST("/v1/external/getStates") suspend fun getSingleState(@Body body : SingleStateIM): Response<SingleStateOM>
+
+    @POST("/v1/external/getCity") suspend fun getSingleCity(@Body body : SingleCityIM): Response<SingleCityOM>
 }

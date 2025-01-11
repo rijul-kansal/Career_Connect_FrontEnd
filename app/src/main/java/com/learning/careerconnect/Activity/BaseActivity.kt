@@ -78,7 +78,6 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     // checking notification permission
-    @SuppressLint("InlinedApi")
     fun checkNotificationPermission(context: Activity): Boolean {
         return (ContextCompat.checkSelfPermission(
             context,
@@ -86,6 +85,12 @@ open class BaseActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_NOTIFICATION_POLICY
+        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED &&  ContextCompat.checkSelfPermission(
+                context,
+        Manifest.permission.READ_MEDIA_IMAGES
         ) == PackageManager.PERMISSION_GRANTED)
     }
     // else req permission
@@ -96,7 +101,8 @@ open class BaseActivity : AppCompatActivity() {
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     val storagePermissions33 = arrayOf(
         Manifest.permission.ACCESS_NOTIFICATION_POLICY,
-        Manifest.permission.POST_NOTIFICATIONS
+        Manifest.permission.POST_NOTIFICATIONS,
+        Manifest.permission.READ_MEDIA_IMAGES
     )
     fun permissions(): Array<String> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -105,9 +111,11 @@ open class BaseActivity : AppCompatActivity() {
             storagePermissions
         }
     }
+    @SuppressLint("InlinedApi")
     val storagePermissions = arrayOf(
         Manifest.permission.ACCESS_NOTIFICATION_POLICY,
-        Manifest.permission.POST_NOTIFICATIONS
+        Manifest.permission.POST_NOTIFICATIONS,
+        Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
     fun showProgressBar(activity: Activity)
@@ -119,6 +127,6 @@ open class BaseActivity : AppCompatActivity() {
 
     fun cancelProgressBar()
     {
-        dialog.dismiss()
+        dialog.cancel()
     }
 }
