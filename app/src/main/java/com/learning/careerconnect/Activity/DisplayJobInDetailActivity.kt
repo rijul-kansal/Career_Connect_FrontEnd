@@ -268,6 +268,7 @@ class DisplayJobInDetailActivity : BaseActivity() {
             }
             index++
         }
+        if(jobsArr.size !=0 && index < jobsArr.size)
         jobsArr.removeAt(index)
         val e=sharedPreferenceToGetData.edit()
         val jsonString = gson.toJson(jobsArr)

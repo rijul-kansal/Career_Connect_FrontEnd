@@ -1,5 +1,6 @@
 package com.learning.careerconnect.Adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -25,43 +26,44 @@ class FiltersAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        Log.d("rk",items.toString())
         val item = items[position]
-        holder.binding.gridViewTextView.text = item
+            holder.binding.gridViewTextView.text = item
 
-        if ((type == "Time" && position == currentPos) || (type == "Time" && sets.contains(position))) {
-            holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_greu_colour)
-            currentPos=position
-        } else {
-            holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_white_colour)
-        }
-        if (type != "Time" && sets.contains(position)) {
-            holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_greu_colour)
-        }
-        holder.itemView.setOnClickListener {
-            onClickListener?.onClick(position, item)
-
-            if (type == "Time") {
-
-                if (currentPos == position) {
-                    currentPos = -1
-                } else {
-                    val prevPos = currentPos
-                    currentPos = position
-                    notifyItemChanged(prevPos)
-                }
-                notifyItemChanged(position)
+            if ((type == "Time" && position == currentPos) || (type == "Time" && sets.contains(position))) {
+                holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_greu_colour)
+                currentPos=position
+            } else {
+                holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_white_colour)
             }
-            else
-            {
-                if (holder.binding.gridViewTextView.background.constantState ==
-                    ContextCompat.getDrawable(holder.binding.gridViewTextView.context, R.drawable.filter_option_bg_greu_colour)?.constantState) {
-                    holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_white_colour)
-                } else {
-                    holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_greu_colour)
+            if (type != "Time" && sets.contains(position)) {
+                holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_greu_colour)
+            }
+            holder.itemView.setOnClickListener {
+                onClickListener?.onClick(position, item)
+
+                if (type == "Time") {
+
+                    if (currentPos == position) {
+                        currentPos = -1
+                    } else {
+                        val prevPos = currentPos
+                        currentPos = position
+                        notifyItemChanged(prevPos)
+                    }
+                    notifyItemChanged(position)
+                }
+                else
+                {
+                    if (holder.binding.gridViewTextView.background.constantState ==
+                        ContextCompat.getDrawable(holder.binding.gridViewTextView.context, R.drawable.filter_option_bg_greu_colour)?.constantState) {
+                        holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_white_colour)
+                    } else {
+                        holder.binding.gridViewTextView.setBackgroundResource(R.drawable.filter_option_bg_greu_colour)
+                    }
                 }
             }
         }
-    }
 
     override fun getItemCount(): Int {
         return items.size
