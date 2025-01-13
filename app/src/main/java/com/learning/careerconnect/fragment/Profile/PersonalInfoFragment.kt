@@ -24,11 +24,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.learning.careerconnect.Activity.BaseActivity
 import com.learning.careerconnect.Adapter.ProfileAdapter.LanguageKnownAdapter
+import com.learning.careerconnect.Adapter.ProfileAdapter.LanguageKnownAdapterDialog
 import com.learning.careerconnect.MVVM.ExtMVVM
 import com.learning.careerconnect.Model.LoginOM
 import com.learning.careerconnect.Model.SingleCityIM
@@ -49,6 +51,8 @@ class PersonalInfoFragment : Fragment() {
     var SELECT_PICTURE: Int = 200
     lateinit var extVM: ExtMVVM
     lateinit var dialog:Dialog
+    lateinit var languageKnown : ArrayList<String>
+    lateinit var itemAdapterForLanguageDialog:LanguageKnownAdapterDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,7 +87,10 @@ class PersonalInfoFragment : Fragment() {
             threeValueDialog(binding.currentLocation,"Current Location",userData.data?.data?.currentLocation?.country , userData.data?.data?.currentLocation?.state,userData.data?.data?.currentLocation?.city)
         }
 
-
+        binding.cardViewLanguage.setOnClickListener {
+            Log.d("rk","hello")
+            shownLanguageAdapter("Languages Known")
+        }
         return binding.root
     }
 
@@ -109,6 +116,7 @@ class PersonalInfoFragment : Fragment() {
             binding.currentLocation.text = "Add Location"
 
         var arr = userData.data!!.data!!.language as ArrayList<String>
+        languageKnown = arr
         if(arr.size==0)
             arr.add("Add Languages")
         binding.language.layoutManager = LinearLayoutManager(requireActivity())
@@ -126,17 +134,6 @@ class PersonalInfoFragment : Fragment() {
             .placeholder(R.drawable.career_connect_white_bg)
             .into(binding.profileImage)
     }
-
-    private fun getDateTime(s: Long): String? {
-        try {
-            val sdf = SimpleDateFormat("MM/dd/yyyy")
-            val netDate = Date(s )
-            return sdf.format(netDate)
-        } catch (e: Exception) {
-            return e.toString()
-        }
-    }
-
     fun singleValueDialog(actualView:TextView,generalText:String,actualValue:String){
         var dialog = Dialog(requireActivity())
         val view: View = LayoutInflater.from(requireActivity()).inflate(R.layout.single_input_allowed, null)
@@ -156,6 +153,36 @@ class PersonalInfoFragment : Fragment() {
                 actualView.text = edText.text.toString()
             }
             Log.d("rk",valueChanges.toString())
+            dialog.cancel()
+        }
+        dialog.show()
+    }
+    fun singleValueDialogForLanguage(generalText:String ) {
+        var dialog = Dialog(requireActivity())
+        val view: View = LayoutInflater.from(requireActivity()).inflate(R.layout.single_input_allowed, null)
+        val doneButton = view.findViewById<TextView>(R.id.doneBtn)
+        val edText = view.findViewById<EditText>(R.id.etDialog)
+        dialog.setContentView(view)
+        view.findViewById<TextView>(R.id.generalTV).setText(generalText)
+        val window = dialog.window
+        window?.setLayout(MATCH_PARENT, WRAP_CONTENT)
+        window?.setBackgroundDrawableResource(android.R.color.transparent)
+        window?.setGravity(Gravity.BOTTOM)
+        doneButton.setOnClickListener {
+            if(edText.text.length !=0)
+            {
+                if(userData.data?.data?.language!!.size > 0 && userData.data?.data?.language?.get(0) == "Add Languages")
+                {
+                    languageKnown.removeAt(0)
+                    languageKnown.add(edText.text.toString())
+                    itemAdapterForLanguageDialog.notifyDataSetChanged()
+                }
+                else
+                {
+                    languageKnown.add(edText.text.toString())
+                    itemAdapterForLanguageDialog.notifyDataSetChanged()
+                }
+            }
             dialog.cancel()
         }
         dialog.show()
@@ -243,7 +270,10 @@ class PersonalInfoFragment : Fragment() {
         }
         doneButton.setOnClickListener {
 
-            if(edText1.text.toString() != actualValue1 || edText2.text.toString() != actualValue2 || edText3.text.toString() != actualValue3)
+            if(edText1.text.toString().length !=0 &&
+                edText2.text.toString().length !=0 &&
+                edText3.text.toString().length !=0 &&
+                (edText1.text.toString() != actualValue1 || edText2.text.toString() != actualValue2 || edText3.text.toString() != actualValue3))
             {
                 valueChanges = true
                 binding.currentLocation.text = "${edText1.text},${edText2.text},${edText3.text}"
@@ -265,7 +295,6 @@ class PersonalInfoFragment : Fragment() {
             val arrayAdapter1 = ArrayAdapter(requireContext(), R.layout.drop_down_item_text_view, arr)
             edText2.setAdapter(arrayAdapter1)
         })
-
         extVM.observerForGetSingleCitySearch().observe(viewLifecycleOwner, Observer {
                 result->
             cancelProgressBar()
@@ -280,6 +309,49 @@ class PersonalInfoFragment : Fragment() {
             val arrayAdapter1 = ArrayAdapter(requireContext(), R.layout.drop_down_item_text_view, arr)
             edText3.setAdapter(arrayAdapter1)
         })
+        dialog.show()
+    }
+    fun shownLanguageAdapter(generalText:String) {
+        var arr = languageKnown
+        var dialog = Dialog(requireActivity())
+        val view = LayoutInflater.from(requireActivity()).inflate(R.layout.recycle_view_dialog, null)
+        view.findViewById<TextView>(R.id.generalTV).setText(generalText)
+        var recycleView = view.findViewById<RecyclerView>(R.id.recycleViewDialog)
+        dialog.setContentView(view)
+        itemAdapterForLanguageDialog = LanguageKnownAdapterDialog(languageKnown)
+        recycleView.layoutManager = LinearLayoutManager(requireActivity())
+
+        recycleView.adapter = itemAdapterForLanguageDialog
+        itemAdapterForLanguageDialog.setOnClickListener(object :
+            LanguageKnownAdapterDialog.OnClickListener {
+            override fun onClick(position: Int?, model: String) {
+                if(model == "addContent")
+                {
+                    singleValueDialogForLanguage("Add your fav Language")
+
+                }
+                else if(model == "DoneBtn")
+                {
+                    if(languageKnown.size ==0)
+                    {
+                        languageKnown.add("Add Languages")
+                    }
+                    if(arr != languageKnown)
+                    {
+                        valueChanges = true
+                    }
+                    dialog.cancel()
+                }
+                else
+                {
+                    languageKnown.removeAt(position!!)
+                    itemAdapterForLanguageDialog.notifyDataSetChanged()
+                }
+            }
+        })
+        val window = dialog.window
+        window?.setLayout(MATCH_PARENT, WRAP_CONTENT)
+        window?.setBackgroundDrawableResource(android.R.color.white)
         dialog.show()
     }
 
@@ -320,5 +392,15 @@ class PersonalInfoFragment : Fragment() {
     fun cancelProgressBar()
     {
         dialog.cancel()
+    }
+
+    private fun getDateTime(s: Long): String? {
+        try {
+            val sdf = SimpleDateFormat("MM/dd/yyyy")
+            val netDate = Date(s )
+            return sdf.format(netDate)
+        } catch (e: Exception) {
+            return e.toString()
+        }
     }
 }
