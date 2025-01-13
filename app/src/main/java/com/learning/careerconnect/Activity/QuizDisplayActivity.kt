@@ -168,6 +168,7 @@ class QuizDisplayActivity : BaseActivity() {
 
     private fun displayNextQuestion() {
         Log.d("rk",index.toString())
+        binding.toolbar.title = "Question No :${index+2}"
         binding.videoView1.seekTo(0)
         countDownTimer2=null
         index++

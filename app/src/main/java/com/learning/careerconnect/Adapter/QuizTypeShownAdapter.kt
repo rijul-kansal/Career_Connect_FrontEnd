@@ -15,14 +15,18 @@ class QuizTypeShownAdapter(
 ) : RecyclerView.Adapter<QuizTypeShownAdapter.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
     val map = mapOf(
-        "Python" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/python.png",
-        "Java" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/java.png",
-        "C++" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/cpp.jpg",
         "AWS" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/aws.png",
-        "AndroidAppDevelopment" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/android.jpeg",
-        "IoT" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/iot.png",
-        "Machine Learning" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/ml.jpg",
-        "Blockchain" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/block+chain.jpeg"
+        "CPP" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/cpp.png",
+        "AI" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/ai.avif",
+        "ML" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/ml.png",
+        "JavaScript" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/js.png",
+        "SQL" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/sql.png",
+        "Android App development" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/androidappdev.png",
+        "PYTHON" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/python.jpg",
+        "JAVA" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/java.png",
+        "Cyber Security" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/cs.jpg",
+        "BLOCKCHAIN" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/block+chain.jpg",
+        "IOT" to "https://career-connect-bkt.s3.ap-south-1.amazonaws.com/iot.png",
     )
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = QuizTypeShownUiBinding.inflate(LayoutInflater.from(parent.context), parent, false)

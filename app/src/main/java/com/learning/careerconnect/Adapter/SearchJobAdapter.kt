@@ -1,6 +1,7 @@
 package com.learning.careerconnect.Adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,6 +101,7 @@ class SearchJobAdapter(
         private var backBtn = binding.backBtn
         private var forwardBtn = binding.forwardBtn
         fun bind(totalItems: Int, currpos:Int) {
+            Log.d("rk","total items $totalItems")
             dots.clear()
             ll.removeAllViews()
             val totalDots = if (totalItems % 10 == 0) {
