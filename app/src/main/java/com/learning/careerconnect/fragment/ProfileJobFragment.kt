@@ -33,12 +33,12 @@ class ProfileJobFragment : Fragment() {
          *     Email d
          *     language d
          *Education
-         *     education
-         *     skills
-         *     Resume Link
-         *     Git link
-         *     portfolio link
-         *     Coding Profile Link
+         *     education d
+         *     skills d
+         *     Resume Link d
+         *     Git link d
+         *     portfolio link d
+         *     Coding Profile Link d
          *Experience
          *     Summary
          *     experience
