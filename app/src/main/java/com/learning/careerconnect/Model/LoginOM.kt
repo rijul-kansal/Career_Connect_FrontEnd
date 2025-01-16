@@ -1,84 +1,98 @@
 package com.learning.careerconnect.Model
 
 data class LoginOM(
-    var `data`: Data? = null,
-    var message:String?=null,
-    var status: String? = null, // success
-    var token: String? = null, // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYkBnbWFpbC5jb20iLCJpYXQiOjE3MjcyODcwODYsImV4cCI6MTcyODE1MTA4Nn0.cbZ_vQ5M1knLZ2g8XzG8ch9b7s2O4k9w7KlLPWLUy88
-    var refreshToken: String? = null, // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYkBnbWFpbC5jb20iLCJpYXQiOjE3MjcyODcwODYsImV4cCI6MTcyODE1MTA4Nn0.cbZ_vQ5M1knLZ2g8XzG8ch9b7s2O4k9w7KlLPWLUy88
+    var `data`: Data?,
+    var refreshToken: String?, // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoicjNAZ21haWwuY29tIiwiaWF0IjoxNzM3MDQ5NDY3LCJleHAiOjE3NDQ4MjU0Njd9.6HFZjZxP3tUCNrLccsvkfbrBZnIEmMB0D9ZVs_OZP-0
+    var status: String?, // success
+    var message:String?,
+    var token: String? // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoicjNAZ21haWwuY29tIiwiaWF0IjoxNzM3MDQ5NDY3LCJleHAiOjE3Mzc5MTM0Njd9.l4xS8E3ri3cLL4Mnj7jvx9_NuDxVVFpvpRN8PhHopxs
 ) {
     data class Data(
-        var `data`: Data? = null
+        var `data`: Data?
     ) {
         data class Data(
-            var __v: Int? = null, // 1
-            var _id: String? = null, // 66f44f07014815aefa92105f
-            var achievements: List<Achievement?>? = null,
-            var careerPreference: CareerPreference? = null,
-            var certificateEarned: List<Any?>? = null,
-            var codingProfileLink: List<String?>? = null,
-            var currentLocation: CurrentLocation? = null,
-            var dateOfBirth: Long? = null, // 915148800000
-            var education: List<Education?>? = null,
-            var email: String? = null, // b@gmail.com
-            var experience: List<Experience?>? = null,
-            var fcmToken: String? = null, // dPEe7gSgTl2rB2Bv-spAAk:APA91bFWmRRt_SKQSNq1gw1n3O503wCAX8HvylMnHWBvI15_PzXd8nAxAJUjm0Dg2-POu00j8Rbyv8rKSiL3_XKM0wzlFZy9AiyP_J1-9TurcCMtr8HhlQpjOKn5st-C--4Ubu7KC4Kb
-            var gender: String? = null, // Male
-            var githubLink: String? = null, // https://github.com/johndoe
-            var image: String? = null, // https://ghantee.com/wp-content/uploads/2023/12/lord-shiva-and-parvati-cute-cartoon-image.jpg
-            var language: List<String?>? = null,
-            var mobileNumber: Long? = null, // 9876543210
-            var name: String? = null, // Bhole Baba
-            var portfolioLink: String? = null, // https://johndoe.dev
-            var project: List<Project?>? = null,
-            var resumeLink: String? = null, // https://example.com/resume/johndoe.pdf
-            var skills: List<String?>? = null,
-            var summary: String? = null, // Highly motivated software developer with 2+ years of experience in full-stack development. Skilled in JavaScript, Node.js, React, and AI technologies.
-            var typeOfUser: String? = null // User
+            var __v: Int?, // 3
+            var _id: String?, // 67894416e6d944d0dda8c26b
+            var achievements: List<Achievement?>?,
+            var careerPreference: CareerPreference?,
+            var certificateEarned: List<CertificateEarned?>?,
+            var currentLocation: CurrentLocation?,
+            var dateOfBirth: Long?, // 1735575475000
+            var education: List<Education?>?,
+            var email: String?, // r3@gmail.com
+            var experience: List<Experience?>?,
+            var gender: String?, // Female
+            var image: String?, // https://career-connect-bkt.s3.ap-south-1.amazonaws.com/shiv.jpg
+            var language: List<String?>?,
+            var links: Links?,
+            var mobileNumber: Long?, // 9123456789
+            var name: String?, // Jane Smith
+            var project: List<Project?>?,
+            var skills: List<String?>?,
+            var fcmToken:String?,
+            var summary: String?, // A passionate data scientist with experience in machine learning and data analysis. Seeking opportunities to apply my skills in a challenging role that values innovation and creativity.
+            var typeOfUser: String? // Recruiter
         ) {
             data class Achievement(
-                var _id: String? = null, // 66f44f25014815aefa92106d
-                var description: String? = null, // Won 1st place in the Hackathon organized by XYZ Company
-                var link: String? = null // https://marketplace.canva.com/EAFGv9WhSmc/1/0/1600w/canva-blue-and-yellow-minimalist-employee-of-the-month-certificate-jaIc19nYjY4.jpg
+                var _id: String?, // 67894471e6d944d0dda8c2aa
+                var description: String?, // Winner of AI Innovation Challenge 2023
+                var link: String? // https://ai-innovation.com/winners-2023
             )
 
             data class CareerPreference(
-                var _id: String? = null, // 66f44f25014815aefa921065
-                var preferredJobType: List<String?>? = null,
-                var preferredLocation: List<String?>? = null
+                var _id: String?, // 67894471e6d944d0dda8c2a3
+                var preferredJobType: List<String?>?,
+                var preferredLocation: List<String?>?
+            )
+
+            data class CertificateEarned(
+                var _id: String?, // 67894471e6d944d0dda8c2ad
+                var date: Long?, // 1633027200000
+                var score: Int?, // 9
+                var type: String? // Certified Data Scientist
             )
 
             data class CurrentLocation(
-                var city: String? = null, // Mumbai
-                var country: String? = null, // India
-                var state: String? = null // Maharashtra
+                var city: String?, // Los Angeles
+                var country: String?, // USA
+                var state: String? // California
             )
 
             data class Education(
-                var CGPA: String? = null, // 8.5
-                var _id: String? = null, // 66f44f25014815aefa921066
-                var collegeName: String? = null, // IIT Bombay
-                var course: String? = null, // B.Tech in Computer Science
-                var graduationYear: String? = null // 2022
+                var CGPA: String?, // 9.0
+                var _id: String?, // 67894471e6d944d0dda8c2a4
+                var collegeName: String?, // University of California, Los Angeles
+                var course: String?, // Computer Science
+                var graduationYear: String? // 2023
             )
 
             data class Experience(
-                var _id: String? = null, // 66f44f25014815aefa921068
-                var description: String? = null, // Worked on backend services, developed APIs, and optimized database queries for high performance systems.Worked on backend services, developed APIs, and optimized database queries for high performance systems.
-                var endDate: Long? = null, // 1672444800000
-                var nameOfCompany: String? = null, // Tech Solutions Pvt Ltd
-                var role: String? = null, // Software Engineer
-                var startDate: Long? = null, // 1609459200000
-                var type: String? = null // Remote
+                var _id: String?, // 67894471e6d944d0dda8c2a6
+                var description: String?, // Developed scalable APIs for a SaaS product, resulting in a 20% increase in system efficiency. Led a small team to integrate cloud-based solutions into legacy systems.
+                var endDate: Long?, // 1630992000000
+                var nameOfCompany: String?, // Tech Innovations
+                var role: String?, // Software Engineer
+                var startDate: Long?, // 1609459200000
+                var type: String? // Remote
+            )
+
+            data class Links(
+                var _id: String?, // 67894471e6d944d0dda8c2ac
+                var codeForces: String?, // Asd
+                var github: String?, // fd
+                var leetCode: String?, // Dd
+                var website: String?, // DV
+                var linkedin: String?, // DV
+                var codeChef: String?, // DV
             )
 
             data class Project(
-                var _id: String? = null, // 66f44f25014815aefa92106a
-                var description: String? = null, // Developed a personal portfolio website to showcase projects and skills using modern web technologies.
-                var gitHubLink: String? = null, // https://github.com/johndoe/portfolio
-                var name: String? = null, // Personal Portfolio Website
-                var projectLink: String? = null, // https://johndoe.dev
-                var skills: List<String?>? = null
+                var _id: String?, // 67894471e6d944d0dda8c2a8
+                var description: String?, // A machine learning model to predict customer churn based on historical data. Achieved an accuracy of 92%.
+                var gitHubLink: String?, // https://github.com/janesmith/ml-predictive-analytics
+                var name: String?, // Machine Learning Model for Predictive Analytics
+                var projectLink: String?, // https://janesmith.com/ml-project
+                var skills: List<String?>?
             )
         }
     }

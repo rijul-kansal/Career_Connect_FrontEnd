@@ -57,8 +57,7 @@
                     android:gravity="center|left"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
+                    android:textSize="20sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
@@ -99,8 +98,7 @@
                     android:gravity="center|left"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
+                    android:textSize="20sp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
@@ -141,8 +139,7 @@
                     android:gravity="center|left"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textSize="20sp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
@@ -183,8 +180,7 @@
                     android:gravity="center|left"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
+                    android:textSize="20sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
@@ -225,8 +221,7 @@
                     android:gravity="center|left"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
+                    android:textSize="20sp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
@@ -267,8 +262,7 @@
                     android:gravity="center|left"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
+                    android:textSize="20sp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
@@ -289,7 +283,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Language Known"
-                    android:gravity="center"
+                    android:layout_marginLeft="12dp"
                     android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold"/>

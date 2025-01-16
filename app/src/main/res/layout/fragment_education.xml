@@ -98,11 +98,48 @@
                     android:layout_height="2dp"
                     android:background="@color/dark_grey"
                     android:layout_marginTop="4dp"/>
-                <androidx.recyclerview.widget.RecyclerView
+                <LinearLayout
+                    android:gravity="center"
+                    android:layout_margin="12dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:id="@+id/recycleViewlinks"/>
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/career_connect_white_bg"
+                        android:id="@+id/codechef"/>
+                    <ImageView
+                        android:layout_marginLeft="12dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/career_connect_white_bg"
+                        android:id="@+id/github"/>
+                    <ImageView
+                        android:layout_marginLeft="12dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/career_connect_white_bg"
+                        android:id="@+id/codeforces"/>
+                    <ImageView
+                        android:layout_marginLeft="12dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/career_connect_white_bg"
+                        android:id="@+id/leetcode"/>
+                    <ImageView
+                        android:layout_marginLeft="12dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/career_connect_white_bg"
+                        android:id="@+id/website"/>
+                    <ImageView
+                        android:layout_marginLeft="12dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/career_connect_white_bg"
+                        android:id="@+id/linkedin"/>
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView

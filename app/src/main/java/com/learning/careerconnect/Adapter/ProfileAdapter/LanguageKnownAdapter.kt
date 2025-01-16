@@ -13,7 +13,7 @@ class LanguageKnownAdapter(
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.binding.textView.text= item
+        holder.binding.textView.text= "${position+1}) "+item
     }
     override fun getItemCount(): Int {
         return items.size
