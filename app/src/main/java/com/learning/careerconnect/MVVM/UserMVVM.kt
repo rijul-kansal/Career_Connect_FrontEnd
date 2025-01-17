@@ -15,6 +15,7 @@ import com.learning.careerconnect.Model.UpdateMeOM
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.Utils.Retrofit
 import com.learning.careerconnect.fragment.Profile.EducationFragment
+import com.learning.careerconnect.fragment.Profile.PersonalInfoFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,7 +54,7 @@ class UserMVVM : ViewModel() {
 
 
     var resultOfUploadToS3: MutableLiveData<AttachmentOM> = MutableLiveData()
-    fun uploadToS3(context: Context,token:String, file : MultipartBody.Part , type:RequestBody, fragment:EducationFragment) {
+    fun uploadToS3(context: Context,token:String, file : MultipartBody.Part , type:RequestBody, fragment:Fragment) {
         try {
             if (Constants.checkForInternet(context)) {
                 val func = Constants.getInstance().create(Retrofit::class.java)
@@ -66,13 +67,29 @@ class UserMVVM : ViewModel() {
                         } else {
                             val errorBody = result.errorBody()?.string()
                             val errorMessage = Constants.parseErrorMessage(errorBody)
-                            fragment.errorFn(errorMessage ?: "Unknown error")
-
+                            when(fragment)
+                            {
+                                is PersonalInfoFragment->{
+                                    fragment.errorFn(errorMessage ?: "Unknown error")
+                                }
+                                is EducationFragment->{
+                                    fragment.errorFn(errorMessage ?: "Unknown error")
+                                }
+                            }
                         }
                     }
                 }
             } else {
-                fragment.errorFn("No internet connection")
+                when(fragment)
+                {
+                    is PersonalInfoFragment->{
+                        fragment.errorFn("No internet connection")
+                    }
+                    is EducationFragment->{
+                        fragment.errorFn("No internet connection")
+                    }
+                }
+
             }
         } catch (err: Exception) {
             Log.e("rk", "Exception occurred during sign up: ${err.message}")

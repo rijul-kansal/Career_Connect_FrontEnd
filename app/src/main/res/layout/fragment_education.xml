@@ -187,6 +187,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
                 <LinearLayout
+                    android:id="@+id/uploadResumeLL"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -208,10 +209,12 @@
                         android:src="@drawable/career_connect_white_bg"/>
                 </LinearLayout>
                 <TextView
+                    android:id="@+id/showResume"
+                    android:visibility="gone"
                     android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:text="link"
+                    android:text="Show Resume"
                     android:textSize="8dp"
                     android:gravity="right"
                     android:textColor="@color/blue"

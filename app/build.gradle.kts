@@ -85,8 +85,12 @@ dependencies {
     // socket
     implementation("io.socket:socket.io-client:2.0.0")
 
+    // for multipart
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    // pdf viwer
+    implementation("io.github.afreakyelf:Pdf-Viewer:2.1.1")
 
 
 }

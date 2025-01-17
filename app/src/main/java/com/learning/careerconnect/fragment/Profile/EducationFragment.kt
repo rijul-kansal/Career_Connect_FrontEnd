@@ -1,6 +1,9 @@
 package com.learning.careerconnect.fragment.Profile
 
+import android.app.Activity
+import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,12 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.learning.careerconnect.Activity.BaseActivity
+import com.learning.careerconnect.Activity.ShowResumeActivity
 import com.learning.careerconnect.Adapter.ProfileAdapter.EducationDisplayAdapter
 import com.learning.careerconnect.Adapter.ProfileAdapter.LanguageKnownAdapter
 import com.learning.careerconnect.MVVM.ExtMVVM
@@ -37,6 +42,7 @@ class EducationFragment : Fragment() {
     private var pdfFileUri: Uri? = null
     lateinit var userVM: UserMVVM
     lateinit var token:String
+    lateinit var dialog:Dialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,28 +62,52 @@ class EducationFragment : Fragment() {
         userData = gson.fromJson(fileData, listType)
         populateData()
 
-        binding.resumeIV.setOnClickListener {
+        binding.uploadResumeLL.setOnClickListener {
             launcher.launch("application/pdf")
+        }
+
+        userVM.observerForUploadToS3().observe(viewLifecycleOwner , Observer {
+            result->
+            cancelProgressBar()
+            if(result.status == "success")
+            {
+                val sharedPreference = requireActivity().getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
+                val editor = sharedPreference.edit()
+                userData.data?.data!!.resumeLink = result.data!!.resumeLink
+                val jsonStr = Gson().toJson(userData)
+                editor.putString(Constants.GET_ME_SP, jsonStr)
+                editor.apply()
+                binding.showResume.visibility= View.VISIBLE
+            }
+        })
+
+        binding.showResume.setOnClickListener {
+            if(userData.data!!.data!!.resumeLink !=null)
+            {
+                val intent = Intent(requireActivity(),ShowResumeActivity::class.java)
+                intent.putExtra(Constants.RESUME_LINK,userData.data?.data?.resumeLink.toString())
+                startActivity(intent)
+            }
         }
         return binding.root
     }
     private val launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         pdfFileUri = uri
         val fileUri = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.uri }
-        BaseActivity().toast("File Name: $fileUri",requireActivity())
+        if(fileUri !=null)
+        {
+            showProgressBar(requireActivity())
+            val fileDir = requireContext().filesDir
+            val file = File(fileDir, "image.pdf")
+            val inputStream = uri.let { requireActivity().contentResolver.openInputStream(it) }
+            val outputStream = FileOutputStream(file)
+            inputStream!!.copyTo(outputStream)
+            val requestBody = file.asRequestBody("application/pdf".toMediaTypeOrNull())
+            val part = MultipartBody.Part.createFormData("image", file.name, requestBody)
+            val descriptionRequestBody = "Resume".toRequestBody("text/plain".toMediaTypeOrNull())
+            userVM.uploadToS3(requireContext(),"Bearer $token ",part,descriptionRequestBody, this)
+        }
 
-        val fileDir = requireContext().filesDir
-        val file = File(fileDir, "image.pdf")
-
-        val inputStream = uri?.let { requireActivity().contentResolver.openInputStream(it) }
-        val outputStream = FileOutputStream(file)
-        inputStream!!.copyTo(outputStream)
-        val requestBody = file.asRequestBody("application/pdf".toMediaTypeOrNull())
-        val part = MultipartBody.Part.createFormData("image", file.name, requestBody)
-        val description = "Resume"
-        val descriptionRequestBody = description.toRequestBody("text/plain".toMediaTypeOrNull())
-
-        userVM.uploadToS3(requireContext(),"Bearer $token ",part,descriptionRequestBody, this)
     }
     private fun populateData() {
         var educationArr = userData.data!!.data!!.education
@@ -169,9 +199,26 @@ class EducationFragment : Fragment() {
         if(count == 6 )
             binding.addLinksTV.visibility = View.VISIBLE
 
+        if(userData.data?.data?.resumeLink != null)
+        {
+            binding.showResume.visibility= View.VISIBLE
+        }
+
     }
 
     fun errorFn(message: String) {
         BaseActivity().toast(message, requireContext())
     }
+    fun showProgressBar(activity: Activity)
+    {
+        dialog = Dialog(activity)
+        dialog.setContentView(R.layout.progress_bar)
+        dialog.show()
+    }
+
+    fun cancelProgressBar()
+    {
+        dialog.cancel()
+    }
+
 }

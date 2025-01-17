@@ -1,12 +1,11 @@
 package com.learning.careerconnect.fragment.Profile
 
 import android.app.Activity
-import android.app.Activity.RESULT_OK
+
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -20,6 +19,8 @@ import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -32,12 +33,19 @@ import com.learning.careerconnect.Activity.BaseActivity
 import com.learning.careerconnect.Adapter.ProfileAdapter.LanguageKnownAdapter
 import com.learning.careerconnect.Adapter.ProfileAdapter.LanguageKnownAdapterDialog
 import com.learning.careerconnect.MVVM.ExtMVVM
+import com.learning.careerconnect.MVVM.UserMVVM
 import com.learning.careerconnect.Model.LoginOM
 import com.learning.careerconnect.Model.SingleCityIM
 import com.learning.careerconnect.Model.SingleStateIM
 import com.learning.careerconnect.R
 import com.learning.careerconnect.Utils.Constants
 import com.learning.careerconnect.databinding.FragmentPersonalInfoBinding
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -47,8 +55,8 @@ class PersonalInfoFragment : Fragment() {
     lateinit var binding :FragmentPersonalInfoBinding
     lateinit var userData:LoginOM
     var valueChanges = false
-    var valueChangesImage = false
-    var SELECT_PICTURE: Int = 200
+    lateinit var token:String
+    lateinit var userVM: UserMVVM
     lateinit var extVM: ExtMVVM
     lateinit var dialog:Dialog
     lateinit var languageKnown : ArrayList<String>
@@ -59,7 +67,13 @@ class PersonalInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentPersonalInfoBinding.inflate(inflater, container, false)
-         extVM= ViewModelProvider(this)[ExtMVVM::class.java]
+        extVM= ViewModelProvider(this)[ExtMVVM::class.java]
+        userVM= ViewModelProvider(this)[UserMVVM::class.java]
+
+        val sharedPreference1 =
+            requireActivity().getSharedPreferences(Constants.TOKEN_SP_PN, Context.MODE_PRIVATE)
+        token = sharedPreference1.getString(Constants.JWT_TOKEN_SP, "rk").toString()
+
         val sharedPreference = requireActivity().getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
         val gson = Gson()
         val fileData = sharedPreference.getString(Constants.GET_ME_SP, null)
@@ -81,7 +95,7 @@ class PersonalInfoFragment : Fragment() {
         }
 
         binding.profileImage.setOnClickListener {
-            imageChooser()
+            launcher.launch("image/*")
         }
 
         binding.currentLocation.setOnClickListener {
@@ -92,6 +106,21 @@ class PersonalInfoFragment : Fragment() {
             Log.d("rk","hello")
             shownLanguageAdapter("Languages Known")
         }
+
+        userVM.observerForUploadToS3().observe(viewLifecycleOwner , Observer {
+                result->
+            cancelProgressBar()
+            if(result.status == "success")
+            {
+                val sharedPreference = requireActivity().getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
+                val editor = sharedPreference.edit()
+                userData.data?.data!!.image = result.data!!.image
+                Log.d("rk",userData.data!!.data!!.image.toString())
+                val jsonStr = Gson().toJson(userData)
+                editor.putString(Constants.GET_ME_SP, jsonStr)
+                editor.apply()
+            }
+        })
         return binding.root
     }
 
@@ -126,11 +155,10 @@ class PersonalInfoFragment : Fragment() {
 
         Glide
             .with(requireActivity())
-            .load(userData.data!!.data!!.image)
+            .load(userData.data!!.data!!.image+"?timestamp=${System.currentTimeMillis()}")
             .placeholder(R.drawable.career_connect_white_bg)
             .into(binding.profileImage)
     }
-
     private fun resize(arr: java.util.ArrayList<String>) {
         val heightInDp = 60
         val heightInPx = (heightInDp * requireContext().resources.displayMetrics.density).toInt()
@@ -139,7 +167,6 @@ class PersonalInfoFragment : Fragment() {
         binding.cardViewLanguage.layoutParams=layoutparams
         binding.language.adapter = languageItemAdapter
     }
-
     fun singleValueDialog(actualView:TextView,generalText:String,actualValue:String){
         var dialog = Dialog(requireActivity())
         val view: View = LayoutInflater.from(requireActivity()).inflate(R.layout.single_input_allowed, null)
@@ -363,29 +390,28 @@ class PersonalInfoFragment : Fragment() {
         window?.setBackgroundDrawableResource(android.R.color.white)
         dialog.show()
     }
-
-    fun imageChooser() {
-        val i = Intent()
-        i.setType("image/*")
-        i.setAction(Intent.ACTION_GET_CONTENT)
-        startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE)
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_PICTURE) {
-                val selectedImageUri = data?.data
-                if (null != selectedImageUri) {
-                    valueChangesImage=true
-                    Glide
-                        .with(requireActivity())
-                        .load(selectedImageUri)
-                        .placeholder(R.drawable.career_connect_white_bg)
-                        .into(binding.profileImage)
-                }
-            }
+    private val launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        val fileUri = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.uri }
+        val fileName = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.name }
+        if(fileUri !=null)
+        {
+            Glide
+                .with(requireActivity())
+                .load(fileUri)
+                .placeholder(R.drawable.career_connect_white_bg)
+                .into(binding.profileImage)
+            showProgressBar(requireActivity())
+            val fileDir = requireContext().filesDir
+            val file = File(fileDir, fileName)
+            val inputStream = uri.let { requireActivity().contentResolver.openInputStream(it) }
+            val outputStream = FileOutputStream(file)
+            inputStream!!.copyTo(outputStream)
+            val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+            val part = MultipartBody.Part.createFormData("image", file.name, requestBody)
+            val descriptionRequestBody = "Image".toRequestBody("text/plain".toMediaTypeOrNull())
+            userVM.uploadToS3(requireContext(),"Bearer $token ",part,descriptionRequestBody, this)
         }
+
     }
     fun errorFn(message: String) {
         BaseActivity().toast(message, requireContext())

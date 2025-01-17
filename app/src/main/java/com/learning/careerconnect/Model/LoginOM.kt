@@ -26,7 +26,8 @@ data class LoginOM(
             var language: List<String?>?,
             var links: Links?,
             var mobileNumber: Long?, // 9123456789
-            var name: String?, // Jane Smith
+            var name: String?,
+            var resumeLink:String?,
             var project: List<Project?>?,
             var skills: List<String?>?,
             var fcmToken:String?,

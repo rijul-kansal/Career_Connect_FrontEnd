@@ -141,6 +141,7 @@ package com.learning.careerconnect.Model
             "linkedin": "Fd",
             "_id": "67894c762a3a1c9619d1ec01"
         },
+
         "summary": "A passionate data scientist with experience in machine learning and data analysis. Seeking opportunities to apply my skills in a challenging role that values innovation and creativity.",
         "fcmToken": "f9GGZ_1VTtS8LieGn61-ZP:APA91bGg3hwuU4Ve20NZMyMhGT8pNhYb_Yk8v7rW6G1VuzFUI8YPKl5FJG7OUMkoMDB4K2uYUChL9B4p_wM-0dp9MXqr6is9OjgxsUvQiQZpHjH_sfEulgw"
     }
@@ -173,6 +174,7 @@ data class AttachmentOM(
         var name: String?, // Jane Smith
         var project: List<Project?>?,
         var skills: List<String?>?,
+        var resumeLink:String?,
         var summary: String?, // A passionate data scientist with experience in machine learning and data analysis. Seeking opportunities to apply my skills in a challenging role that values innovation and creativity.
         var typeOfUser: String? // Recruiter
     ) {

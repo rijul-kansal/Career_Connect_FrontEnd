@@ -11,17 +11,21 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/career_connect_white_bg"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/career_connect_white_bg"
         android:supportsRtl="true"
         android:theme="@style/Theme.CareerConnect"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".Activity.ShowResumeActivity"
+            android:theme="@style/mainActivityTheme"
+            android:exported="false" />
         <activity
             android:name=".Activity.QuizResultActivity"
             android:exported="true"
@@ -29,7 +33,7 @@
         <activity
             android:name=".Activity.QuizDisplayActivity"
             android:exported="true"
-            android:theme="@style/mainActivityTheme"/>
+            android:theme="@style/mainActivityTheme" />
         <activity
             android:name=".Activity.DisplayJobInDetailActivity"
             android:exported="true"
@@ -37,8 +41,7 @@
         <activity
             android:name=".Activity.ChatActivity"
             android:exported="true"
-            android:theme="@style/mainActivityTheme" >
-        </activity>
+            android:theme="@style/mainActivityTheme"></activity>
         <activity
             android:name=".Activity.BaseActivity"
             android:exported="false" />
@@ -72,6 +75,7 @@
             android:theme="@style/splashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
