@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.Observer
@@ -43,6 +44,7 @@ class EducationFragment : Fragment() {
     lateinit var userVM: UserMVVM
     lateinit var token:String
     lateinit var dialog:Dialog
+    private lateinit var getPDFLauncher: ActivityResultLauncher<String>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,6 +57,25 @@ class EducationFragment : Fragment() {
         token = sharedPreference1.getString(Constants.JWT_TOKEN_SP, "rk").toString()
 
 
+        getPDFLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            pdfFileUri = uri
+            val fileUri = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.uri }
+            if(fileUri !=null)
+            {
+                showProgressBar(requireActivity())
+                val fileDir = requireContext().filesDir
+                val file = File(fileDir, "image.pdf")
+                val inputStream = uri.let { requireActivity().contentResolver.openInputStream(it) }
+                val outputStream = FileOutputStream(file)
+                inputStream!!.copyTo(outputStream)
+                val requestBody = file.asRequestBody("application/pdf".toMediaTypeOrNull())
+                val part = MultipartBody.Part.createFormData("image", file.name, requestBody)
+                val descriptionRequestBody = "Resume".toRequestBody("text/plain".toMediaTypeOrNull())
+                userVM.uploadToS3(requireContext(),"Bearer $token ",part,descriptionRequestBody, this)
+            }
+
+        }
+
         val sharedPreference = requireActivity().getSharedPreferences(Constants.GET_ME_SP_PN, Context.MODE_PRIVATE)
         val gson = Gson()
         val fileData = sharedPreference.getString(Constants.GET_ME_SP, null)
@@ -63,7 +84,7 @@ class EducationFragment : Fragment() {
         populateData()
 
         binding.uploadResumeLL.setOnClickListener {
-            launcher.launch("application/pdf")
+            getPDFLauncher.launch("application/pdf")
         }
 
         userVM.observerForUploadToS3().observe(viewLifecycleOwner , Observer {
@@ -90,24 +111,6 @@ class EducationFragment : Fragment() {
             }
         }
         return binding.root
-    }
-    private val launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        pdfFileUri = uri
-        val fileUri = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.uri }
-        if(fileUri !=null)
-        {
-            showProgressBar(requireActivity())
-            val fileDir = requireContext().filesDir
-            val file = File(fileDir, "image.pdf")
-            val inputStream = uri.let { requireActivity().contentResolver.openInputStream(it) }
-            val outputStream = FileOutputStream(file)
-            inputStream!!.copyTo(outputStream)
-            val requestBody = file.asRequestBody("application/pdf".toMediaTypeOrNull())
-            val part = MultipartBody.Part.createFormData("image", file.name, requestBody)
-            val descriptionRequestBody = "Resume".toRequestBody("text/plain".toMediaTypeOrNull())
-            userVM.uploadToS3(requireContext(),"Bearer $token ",part,descriptionRequestBody, this)
-        }
-
     }
     private fun populateData() {
         var educationArr = userData.data!!.data!!.education

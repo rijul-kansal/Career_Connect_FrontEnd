@@ -19,6 +19,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
@@ -62,6 +63,9 @@ class PersonalInfoFragment : Fragment() {
     lateinit var languageKnown : ArrayList<String>
     lateinit var itemAdapterForLanguageDialog:LanguageKnownAdapterDialog
     lateinit var languageItemAdapter:LanguageKnownAdapter
+
+    private lateinit var getImageLauncher: ActivityResultLauncher<String>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -81,6 +85,32 @@ class PersonalInfoFragment : Fragment() {
         userData = gson.fromJson(fileData, listType)
         BaseActivity().requestPermission(requireActivity())
         populateData()
+
+
+        getImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            val fileUri = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.uri }
+            val fileName = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.name }
+            if(fileUri !=null)
+            {
+                Glide
+                    .with(requireActivity())
+                    .load(fileUri)
+                    .placeholder(R.drawable.career_connect_white_bg)
+                    .into(binding.profileImage)
+                showProgressBar(requireActivity())
+                val fileDir = requireContext().filesDir
+                val file = fileName?.let { File(fileDir, it) }
+                val inputStream = uri.let { requireActivity().contentResolver.openInputStream(it) }
+                val outputStream = FileOutputStream(file)
+                inputStream!!.copyTo(outputStream)
+                val requestBody = file!!.asRequestBody("image/*".toMediaTypeOrNull())
+                val part = MultipartBody.Part.createFormData("image", file.name, requestBody)
+                val descriptionRequestBody = "Image".toRequestBody("text/plain".toMediaTypeOrNull())
+                userVM.uploadToS3(requireContext(),"Bearer $token ",part,descriptionRequestBody, this)
+            }
+        }
+
+
         binding.name.setOnClickListener {
             singleValueDialog(binding.name,"Name",binding.name.text.toString())
         }
@@ -95,7 +125,7 @@ class PersonalInfoFragment : Fragment() {
         }
 
         binding.profileImage.setOnClickListener {
-            launcher.launch("image/*")
+            getImageLauncher.launch("image/*")
         }
 
         binding.currentLocation.setOnClickListener {
@@ -103,7 +133,6 @@ class PersonalInfoFragment : Fragment() {
         }
 
         binding.cardViewLanguage.setOnClickListener {
-            Log.d("rk","hello")
             shownLanguageAdapter("Languages Known")
         }
 
@@ -390,45 +419,17 @@ class PersonalInfoFragment : Fragment() {
         window?.setBackgroundDrawableResource(android.R.color.white)
         dialog.show()
     }
-    private val launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        val fileUri = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.uri }
-        val fileName = uri?.let { DocumentFile.fromSingleUri(requireContext(), it)?.name }
-        if(fileUri !=null)
-        {
-            Glide
-                .with(requireActivity())
-                .load(fileUri)
-                .placeholder(R.drawable.career_connect_white_bg)
-                .into(binding.profileImage)
-            showProgressBar(requireActivity())
-            val fileDir = requireContext().filesDir
-            val file = File(fileDir, fileName)
-            val inputStream = uri.let { requireActivity().contentResolver.openInputStream(it) }
-            val outputStream = FileOutputStream(file)
-            inputStream!!.copyTo(outputStream)
-            val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-            val part = MultipartBody.Part.createFormData("image", file.name, requestBody)
-            val descriptionRequestBody = "Image".toRequestBody("text/plain".toMediaTypeOrNull())
-            userVM.uploadToS3(requireContext(),"Bearer $token ",part,descriptionRequestBody, this)
-        }
-
-    }
     fun errorFn(message: String) {
         BaseActivity().toast(message, requireContext())
     }
-
-    fun showProgressBar(activity: Activity)
-    {
+    fun showProgressBar(activity: Activity) {
         dialog = Dialog(activity)
         dialog.setContentView(R.layout.progress_bar)
         dialog.show()
     }
-
-    fun cancelProgressBar()
-    {
+    fun cancelProgressBar() {
         dialog.cancel()
     }
-
     private fun getDateTime(s: Long): String? {
         try {
             val sdf = SimpleDateFormat("MM/dd/yyyy")
