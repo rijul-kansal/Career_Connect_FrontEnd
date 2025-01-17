@@ -85,4 +85,8 @@ dependencies {
     // socket
     implementation("io.socket:socket.io-client:2.0.0")
 
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+
 }

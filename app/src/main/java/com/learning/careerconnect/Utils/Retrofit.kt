@@ -5,6 +5,7 @@ import com.learning.careerconnect.Model.AddQuizScoreToDBOM
 import com.learning.careerconnect.Model.AllSavedJobsJobIdOnlyOM
 import com.learning.careerconnect.Model.ApplyJobIM
 import com.learning.careerconnect.Model.ApplyJobOM
+import com.learning.careerconnect.Model.AttachmentOM
 import com.learning.careerconnect.Model.GetAllAppliedJobsOM
 import com.learning.careerconnect.Model.GetAllSavedLaterJobsOM
 import com.learning.careerconnect.Model.GetAllTypeOfInformationOM
@@ -34,12 +35,16 @@ import com.learning.careerconnect.Model.UpdateMeIM
 import com.learning.careerconnect.Model.UpdateMeOM
 import com.learning.careerconnect.Model.VerifyOTPIM
 import com.learning.careerconnect.Model.VerifyOTPOM
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -119,4 +124,12 @@ interface Retrofit {
     @POST("/v1/external/getStates") suspend fun getSingleState(@Body body : SingleStateIM): Response<SingleStateOM>
 
     @POST("/v1/external/getCity") suspend fun getSingleCity(@Body body : SingleCityIM): Response<SingleCityOM>
+
+    @Multipart
+    @POST("v1/user/attachment")
+    suspend fun postDirectlyToS3(
+        @Header("authorization") authHeader:String,
+        @Part image: MultipartBody.Part,
+        @Part("type") type: RequestBody
+    ):Response<AttachmentOM>
 }

@@ -53,6 +53,7 @@ class PersonalInfoFragment : Fragment() {
     lateinit var dialog:Dialog
     lateinit var languageKnown : ArrayList<String>
     lateinit var itemAdapterForLanguageDialog:LanguageKnownAdapterDialog
+    lateinit var languageItemAdapter:LanguageKnownAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -120,13 +121,8 @@ class PersonalInfoFragment : Fragment() {
         if(arr.size==0)
             arr.add("Add Languages")
         binding.language.layoutManager = LinearLayoutManager(requireActivity())
-        var languageItemAdapter = LanguageKnownAdapter(arr)
-        val heightInDp = 60
-        val heightInPx = (heightInDp * requireContext().resources.displayMetrics.density).toInt()
-        val layoutparams = LinearLayout.LayoutParams(MATCH_PARENT, (arr.size+1) * heightInPx)
-        layoutparams.setMargins(12,12,12,12)
-        binding.cardViewLanguage.layoutParams=layoutparams
-        binding.language.adapter = languageItemAdapter
+        languageItemAdapter = LanguageKnownAdapter(arr)
+        resize(arr)
 
         Glide
             .with(requireActivity())
@@ -134,6 +130,16 @@ class PersonalInfoFragment : Fragment() {
             .placeholder(R.drawable.career_connect_white_bg)
             .into(binding.profileImage)
     }
+
+    private fun resize(arr: java.util.ArrayList<String>) {
+        val heightInDp = 60
+        val heightInPx = (heightInDp * requireContext().resources.displayMetrics.density).toInt()
+        val layoutparams = LinearLayout.LayoutParams(MATCH_PARENT, (arr.size+1) * heightInPx)
+        layoutparams.setMargins(12,12,12,12)
+        binding.cardViewLanguage.layoutParams=layoutparams
+        binding.language.adapter = languageItemAdapter
+    }
+
     fun singleValueDialog(actualView:TextView,generalText:String,actualValue:String){
         var dialog = Dialog(requireActivity())
         val view: View = LayoutInflater.from(requireActivity()).inflate(R.layout.single_input_allowed, null)
@@ -340,6 +346,9 @@ class PersonalInfoFragment : Fragment() {
                     {
                         valueChanges = true
                     }
+                    arr = languageKnown
+                    resize(arr)
+                    languageItemAdapter.notifyDataSetChanged()
                     dialog.cancel()
                 }
                 else
